@@ -26,4 +26,7 @@ public class Users {
 
     private String password;
 
+    @OneToOne(mappedBy = "users")
+    private UserProfile userProfile;
+
 }

@@ -19,6 +19,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", exception.getMessage()));
     }
 
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleProfileNotFound(ProfileNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException exception) {
         return ResponseEntity.badRequest()
