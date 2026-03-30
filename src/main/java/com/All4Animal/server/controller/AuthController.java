@@ -36,6 +36,7 @@ public class AuthController {
         return ResponseEntity.ok(LoginIdCheckResponse.available());
     }
 
+    @Operation(summary = "회원가입", description = "회원가입 성공 시 userId와 message를 발급합니다.")
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest request) {
         SignUpResponse response = authService.signup(request);
