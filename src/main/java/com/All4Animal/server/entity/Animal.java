@@ -28,6 +28,8 @@ public class Animal {
     @Column(name = "animal_id")
     private Long animal_id;
 
+    private String species;
+
     private double weight;
 
     private Integer animal_age;
