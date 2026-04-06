@@ -57,6 +57,7 @@ public class AuthService {
             throw new AuthenticationFailedException("아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 
+
         String accessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), user.getLoginId());
 
         return new LoginResponse(
