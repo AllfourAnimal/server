@@ -35,10 +35,15 @@ public class Users {
 
     @Column(nullable = false, unique = true)
     private String loginId;
+
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String phone;
+
     private LocalDateTime createdAt;
+
     @Column(nullable = false)
     private Integer birthYear;
 

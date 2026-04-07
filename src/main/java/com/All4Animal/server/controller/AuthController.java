@@ -26,7 +26,7 @@ public class AuthController {
 
     @Operation(summary = "아이디 체크 ", description = "아이디 중복확인 하는데에 사용하는 api")
     @GetMapping("/checkId")
-    public ResponseEntity<?> isLoginIdDuplicated(@RequestParam String loginId){
+    public ResponseEntity<?> isLoginIdDuplicated(@Valid @RequestParam String loginId){
         boolean duplicated = authService.isLoginIdDuplicated(loginId);
         if(duplicated){
             return ResponseEntity.ok(LoginIdCheckResponse.duplicated());
