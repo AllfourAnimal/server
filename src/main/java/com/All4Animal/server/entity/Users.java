@@ -27,25 +27,25 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", updatable = false)
+    @Column(updatable = false)
     private Long userId;
 
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    @Column(name = "login_id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String loginId;
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
     private LocalDateTime createdAt;
-    @Column(name = "birth_year", nullable = false)
+    @Column(nullable = false)
     private Integer birthYear;
 
-    @Column(name = "location", nullable = false)
+    @Column(nullable = false)
     private String location;
 
-    @Column(name = "is_experience", nullable = false)
+    @Column(nullable = false)
     private boolean isExperience;
 
     private Housing housingType;
