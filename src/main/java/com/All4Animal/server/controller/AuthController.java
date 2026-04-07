@@ -24,6 +24,11 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @GetMapping("/")
+    public String hello(){
+        return "hello";
+    }
+
     @Operation(summary = "아이디 체크 ", description = "아이디 중복확인 하는데에 사용하는 api")
     @GetMapping("/checkId")
     public ResponseEntity<?> isLoginIdDuplicated(@RequestParam String loginId){

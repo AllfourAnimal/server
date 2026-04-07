@@ -26,15 +26,17 @@ public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "animal_id")
-    private Long animal_id;
+    private Long animalId;
+
+    private String species;
 
     private double weight;
 
-    private Integer animal_age;
+    private Integer animalAge;
 
     private String persona;
 
-    private Gender animal_sex;
+    private Gender animalSex;
 
     private boolean isVaccinated;
 
@@ -51,4 +53,6 @@ public class Animal {
     private String careTel;
 
     private String careAddr;
+
+
 }
