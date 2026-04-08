@@ -19,11 +19,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("")
-    public ResponseEntity<?> getExample(){
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
-
     @GetMapping("/all")
     public ResponseEntity<?> getALlReviews(){
         ReviewListResponse response = reviewService.getAllReviews();
