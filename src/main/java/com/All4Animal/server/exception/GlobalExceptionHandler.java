@@ -1,5 +1,6 @@
 package com.All4Animal.server.exception;
 
+import com.All4Animal.server.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,29 +15,30 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationFailedException.class)
-    public ResponseEntity<Map<String, String>> handleAuthenticationFailed(AuthenticationFailedException exception) {
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailed(AuthenticationFailedException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", exception.getMessage()));
+                .body(ErrorResponse.of("UNAUTHORIZED", exception.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException exception) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException exception) {
         return ResponseEntity.badRequest()
-                .body(Map.of("message", exception.getMessage()));
+                .body(ErrorResponse.of("BAD_REQUEST", exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new LinkedHashMap<>();
 
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("message", "요청값이 올바르지 않습니다.");
-        body.put("errors", errors);
-
-        return ResponseEntity.badRequest().body(body);
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.of(
+                        "VALIDATION_ERROR",
+                        "요청값이 올바르지 않습니다.",
+                        errors
+                ));
     }
 }

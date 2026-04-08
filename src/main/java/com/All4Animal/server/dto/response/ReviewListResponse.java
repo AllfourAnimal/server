@@ -3,9 +3,11 @@ package com.All4Animal.server.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
-public class SignUpResponse {
-    private Long userId;
-    private String loginId;
+public class ReviewListResponse {
+    private Integer count;
+    private List<ReviewItemResponse> reviews;
 }

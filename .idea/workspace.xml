@@ -5,13 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a53293aa-78fa-484a-9a77-4b8c6bead8c1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/client/AnimalApiClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/client/AnimalApiClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/FavoriteController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/RecomendationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/ReviewController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/ErrorResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/ReviewDetailResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/ReviewItemResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/ReviewListResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Recommendation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Review.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/exception/JwtAccessDeniedHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/repository/RecommendationRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/repository/ReviewRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/security/JwtAuthenticationEntryPoint.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/RecommendationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/ReviewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/AnimalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/AnimalController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/request/SignUpRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/request/SignUpRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/LoginResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/LoginResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/SignUpResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/SignUpResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/repository/AnimalRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/repository/AnimalRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AnimalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AnimalService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/AnimalImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/AnimalImage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Favorite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Favorite.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Story.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Story.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Users.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Users.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,10 +73,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="3BzAHISxggRuvRvgfEExp5oHpVV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -76,7 +97,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.ServerApplication.executor": "Run",
-    "git-widget-placeholder": "feature/animal",
+    "git-widget-placeholder": "Merging feature/animal",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
