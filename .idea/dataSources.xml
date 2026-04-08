@@ -13,7 +13,7 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@svc.sel3.cloudtype.app" uuid="9e0cbada-3e42-41a7-8bf1-c03b4d3344f9">
+    <data-source source="LOCAL" name="@svc.sel3.cloudtype.app [2]" uuid="47dcafda-1798-46f0-a456-5affdec84c08">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>

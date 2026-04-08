@@ -3,6 +3,8 @@ package com.All4Animal.server.service;
 import com.All4Animal.server.client.AnimalApiClient;
 import com.All4Animal.server.dto.response.api.AnimalApiResponse;
 import com.All4Animal.server.entity.Animal;
+import com.All4Animal.server.entity.AnimalImage;
+import com.All4Animal.server.repository.AnimalImageRepository;
 import com.All4Animal.server.repository.AnimalRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,14 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
     private final AnimalApiClient animalApiClient;
 
+    private final AnimalImageRepository animalImageRepository;
+
     public List<Animal> getAllAnimals() {
         return animalRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public List<AnimalImage> getImageByAnimalId(Long animalId) {
+        return animalImageRepository.findByAnimal_AnimalId(animalId);
     }
 
     @Transactional
@@ -43,6 +51,25 @@ public class AnimalService {
             }
 
             Animal animal = convertToEntity(item);
+
+            System.out.println("동기화 시작: " + item.getDesertionNo());
+
+            if(item.getPopfile1() != null && !item.getPopfile1().isEmpty()) {
+                animal.getImages().add(AnimalImage.builder()
+                        .imageUrl(item.getPopfile1())
+                        .animal(animal)
+                        .createdAt(LocalDateTime.now())
+                        .build());
+            }
+
+            if(item.getPopfile2() != null && !item.getPopfile2().isEmpty()) {
+                animal.getImages().add(AnimalImage.builder()
+                        .imageUrl(item.getPopfile2())
+                        .animal(animal)
+                        .createdAt(LocalDateTime.now())
+                        .build());
+            }
+
             animalRepository.save(animal);
         }
     }

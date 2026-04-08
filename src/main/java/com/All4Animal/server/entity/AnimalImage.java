@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "AnimalImage")
+@Table(name = "animal_image")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,8 +27,6 @@ public class AnimalImage {
     private Animal animal;
 
     private String imageUrl;
-
-    private boolean isMain; // 메인 이미지에 대한 여부
 
     private LocalDateTime createdAt;
 }

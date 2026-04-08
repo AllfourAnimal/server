@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -56,4 +58,8 @@ public class Animal {
     private String careTel;
 
     private String careAddr;
+
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AnimalImage> images = new ArrayList<>();
 }
