@@ -4,6 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <list default="true" id="a53293aa-78fa-484a-9a77-4b8c6bead8c1" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/FavoriteController.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/RecomendationController.java" afterDir="false" />
@@ -35,6 +37,12 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
+=======
+    <list default="true" id="a53293aa-78fa-484a-9a77-4b8c6bead8c1" name="Changes" comment="" />
+>>>>>>> Stashed changes
+=======
+    <list default="true" id="a53293aa-78fa-484a-9a77-4b8c6bead8c1" name="Changes" comment="" />
+>>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -172,7 +180,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1775481435905</updated>
-      <workItem from="1775481437565" duration="18280000" />
+      <workItem from="1775481437565" duration="18643000" />
     </task>
     <servers />
   </component>
