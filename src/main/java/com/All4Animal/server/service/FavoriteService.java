@@ -8,7 +8,11 @@ import com.All4Animal.server.repository.FavoriteRepository;
 import com.All4Animal.server.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +23,15 @@ public class FavoriteService {
 
     @Transactional
     public String toggleFavorite(Long userId, Long animalId) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("로그인이 필요한 서비스입니다.");
+        }
+
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
         Animal animal = animalRepository.findById(animalId)
                 .orElseThrow(() -> new RuntimeException("동물을 찾을 수 없습니다."));
 
@@ -37,5 +48,23 @@ public class FavoriteService {
                     favoriteRepository.save(favorite);
                     return "찜 등록 완료";
                 });
+    }
+
+    @Transactional
+    public List<Animal> getMyFavoriteAnimals() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("로그인이 필요한 서비스입니다.");
+        }
+
+        String loginId = authentication.getName();
+
+        Users user = usersRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        return favoriteRepository.findAllByUser(user).stream()
+                .map(Favorite::getAnimal)
+                .collect(Collectors.toList());
     }
 }

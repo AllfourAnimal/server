@@ -31,7 +31,7 @@ public class AnimalService {
     }
 
     @Transactional
-    public void syncAnimalsWithApi() {
+    public void syncAnimalsWithApi() { // 동물 데이터 불러오기
         List<AnimalApiResponse> apiItems = animalApiClient.fetchAnimals();
 
         if (apiItems == null || apiItems.isEmpty()) {
@@ -43,7 +43,7 @@ public class AnimalService {
     }
 
     @Transactional
-    public void saveApiAnimals(List<AnimalApiResponse> apiItems) {
+    public void saveApiAnimals(List<AnimalApiResponse> apiItems) { // 동물 데이터 불러오고 DB 저장
         for(AnimalApiResponse item : apiItems) {
             if (animalRepository.existsByDesertionNo(item.getDesertionNo())) {
                 System.out.println(item.getDesertionNo());

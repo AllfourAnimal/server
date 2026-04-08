@@ -1,5 +1,6 @@
 package com.All4Animal.server.controller;
 
+import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.service.FavoriteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/favorites")
@@ -23,5 +26,11 @@ public class FavoriteController {
             @PathVariable Long animalId) {
         String result = favoriteService.toggleFavorite(userId, animalId);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/my_favorite")
+    @Operation(summary = "내 찜 목록 조회", description = "로그인 된 사용자가 찜한 모든 동물 반환")
+    public ResponseEntity<List<Animal>> getMyFavorites() {
+        return ResponseEntity.ok(favoriteService.getMyFavoriteAnimals());
     }
 }
