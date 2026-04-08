@@ -5,19 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a53293aa-78fa-484a-9a77-4b8c6bead8c1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/client/AnimalApiClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/controller/AnimalController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/api/AnimalApiBody.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/api/AnimalApiItems.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/api/AnimalApiResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/dto/response/api/AnimalApiWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/AnimalImage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Favorite.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Story.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/repository/AnimalRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AnimalService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/client/AnimalApiClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/client/AnimalApiClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/entity/Animal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/repository/AnimalRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/repository/AnimalRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AnimalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/All4Animal/server/service/AnimalService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,8 +87,8 @@
   },
   "keyToStringList": {
     "DatabaseDriversLRU": [
-      "mysql",
-      "mariadb"
+      "mariadb",
+      "mysql"
     ]
   }
 }]]></component>
@@ -157,7 +151,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1775481435905</updated>
-      <workItem from="1775481437565" duration="8783000" />
+      <workItem from="1775481437565" duration="18280000" />
     </task>
     <servers />
   </component>

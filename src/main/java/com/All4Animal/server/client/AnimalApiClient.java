@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class AnimalApiClient {
 
-    private final String serviceKey = "YOUR_SERVICE_KEY";
+    private final String serviceKey = "b2f977803123e50791f13db59911c91293a7c87448c01c10743ff11b9452eed6";
     private final String apiUrl = "http://apis.data.go.kr/1543061/abandonmentPublicService_v2/abandonmentPublic_v2";
 
     public List<AnimalApiResponse> fetchAnimals() {
@@ -20,7 +20,7 @@ public class AnimalApiClient {
 
         String url = UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("serviceKey", serviceKey)
-                .queryParam("numOfRows", "100")
+                .queryParam("numOfRows", "1000")
                 .queryParam("pageNo", "1")
                 .toUriString();
 
@@ -30,5 +30,4 @@ public class AnimalApiClient {
                 ? response.getBody().getItems()
                 : Collections.emptyList();
     }
-
 }

@@ -26,7 +26,10 @@ public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "animal_id")
-    private Long animal_id;
+    private Long animalId;
+
+    @Column(unique = true)
+    private String desertionNo;
 
     private String species;
 

@@ -18,18 +18,18 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
     private final AnimalApiClient animalApiClient;
 
+    public List<Animal> getAllAnimals() {
+        return animalRepository.findAllByOrderByCreatedAtDesc();
+    }
+
     @Transactional
     public void syncAnimalsWithApi() {
         List<AnimalApiResponse> apiItems = animalApiClient.fetchAnimals();
 
-//        if(!apiItems.isEmpty()) {
-//            saveApiAnimals(apiItems);
-//        }
-
         if (apiItems == null || apiItems.isEmpty()) {
-            System.out.println("❌ 데이터가 하나도 없습니다! API 응답이나 키를 확인하세요.");
+            System.out.println("불러온 데이터 없음");
         } else {
-            System.out.println("✅ 가져온 아이템 개수: " + apiItems.size() + "개");
+            System.out.println("불러온 데이터 개수: " + apiItems.size() + "개");
             saveApiAnimals(apiItems);
         }
     }
@@ -37,6 +37,11 @@ public class AnimalService {
     @Transactional
     public void saveApiAnimals(List<AnimalApiResponse> apiItems) {
         for(AnimalApiResponse item : apiItems) {
+            if (animalRepository.existsByDesertionNo(item.getDesertionNo())) {
+                System.out.println(item.getDesertionNo());
+                continue;
+            }
+
             Animal animal = convertToEntity(item);
             animalRepository.save(animal);
         }
@@ -44,6 +49,7 @@ public class AnimalService {
 
     private Animal convertToEntity(AnimalApiResponse dto) {
         return Animal.builder()
+                .desertionNo(dto.getDesertionNo())
                 .species(dto.getKindNm())
                 .weight(parseWeight(dto.getWeight()))
                 .animal_age(parseAge(dto.getAge()))
