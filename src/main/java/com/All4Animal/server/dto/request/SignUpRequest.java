@@ -1,8 +1,8 @@
 package com.All4Animal.server.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import com.All4Animal.server.entity.Users;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,8 +24,23 @@ public class SignUpRequest {
     @NotBlank(message = "이름은 필수입니다.")
     private String name;
 
-//    @NotBlank(message = "전화번호는 필수입니다.")
-//    @Pattern(regexp = "^[0-9]{10,11}$", message = "전화번호는 숫자 10~11자리여야 합니다.")
-//    private String phone;
+    @NotBlank(message = "전화번호는 필수입니다.")
+    @Pattern(regexp = "^[0-9]{10,11}$", message = "전화번호는 숫자 10~11자리여야 합니다.")
+    private String phone;
 
+    @NotNull(message = "출생연도는 필수입니다.")
+    @Min(value = 1900, message = "출생연도는 1900년 이상이어야 합니다.")
+    @Max(value = 2026, message = "출생연도는 2100년 이하여야 합니다.")
+    private Integer birthYear;
+
+    @NotBlank(message = "지역은 필수입니다.")
+    @Pattern(
+            regexp = "^[가-힣a-zA-Z0-9\\s]+$",
+            message = "지역은 한글, 영문, 숫자, 공백만 입력할 수 있습니다."
+    )
+    private String location;
+
+    @NotNull(message = "경험 여부는 필수입니다.")
+    private Boolean isExperience;
 }
+

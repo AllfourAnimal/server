@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -38,14 +40,18 @@ public class AuthService {
                 .loginId(request.getLoginId())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .username(request.getName())
+                .phone(request.getPhone())
+                .birthYear(request.getBirthYear())
+                .location(request.getLocation())
+                .isExperience(request.getIsExperience())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         Users savedUser = userRepository.save(user);
 
         return new SignUpResponse(
                 savedUser.getUserId(),
-                savedUser.getLoginId(),
-                "회원가입이 완료되었습니다."
+                savedUser.getLoginId()
         );
     }
 
@@ -62,11 +68,9 @@ public class AuthService {
 
         return new LoginResponse(
                 accessToken,
-                "Bearer",
                 user.getUserId(),
                 user.getLoginId(),
-                user.getUsername(),
-                "로그인에 성공했습니다."
+                user.getUsername()
         );
     }
 }
