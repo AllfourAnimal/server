@@ -23,4 +23,5 @@ public class RecomendationController {
     public ResponseEntity<?> getUserRecommendations(@PathVariable Long userId){
             return ResponseEntity.ok(HttpStatus.OK);
     }
+
 }

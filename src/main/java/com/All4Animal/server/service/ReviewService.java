@@ -1,6 +1,7 @@
 package com.All4Animal.server.service;
 
 import com.All4Animal.server.dto.response.ErrorResponse;
+import com.All4Animal.server.dto.response.ReviewDetailResponse;
 import com.All4Animal.server.dto.response.ReviewItemResponse;
 import com.All4Animal.server.dto.response.ReviewListResponse;
 import com.All4Animal.server.entity.Review;
@@ -31,5 +32,17 @@ public class ReviewService {
                 responses.add(response);
             }
             return new ReviewListResponse(reviews.size(), responses);
+    }
+
+    public ReviewDetailResponse getReview(Long reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+
+        ReviewDetailResponse response = new ReviewDetailResponse(
+                review.getReviewId(), review.getTitle(), review.getContent(), review.getCreatedAt());
+
+        return response;
+
+
     }
 }
