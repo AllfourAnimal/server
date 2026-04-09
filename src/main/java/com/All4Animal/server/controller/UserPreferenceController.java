@@ -27,4 +27,5 @@ public class UserPreferenceController {
         AnimalPreferenceResponse response = userPreferenceService.putUserPreferences(userId, request);
         return ResponseEntity.ok(response);
     }
+
 }
