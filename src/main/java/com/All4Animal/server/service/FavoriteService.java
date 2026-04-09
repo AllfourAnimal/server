@@ -34,6 +34,12 @@ public class FavoriteService {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
+        String loginIdFromToken = authentication.getName();
+
+        if (!user.getLoginId().equals(loginIdFromToken)) {
+            throw new RuntimeException("본인의 계정으로만 찜하기가 가능합니다.");
+        }
+
         Animal animal = animalRepository.findById(animalId)
                 .orElseThrow(() -> new RuntimeException("동물을 찾을 수 없습니다."));
 
