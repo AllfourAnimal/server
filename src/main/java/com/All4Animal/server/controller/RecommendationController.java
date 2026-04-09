@@ -4,7 +4,6 @@ package com.All4Animal.server.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Recommendation", description = "추천 API")
-@SecurityRequirements
 @RequiredArgsConstructor
-public class RecomendationController {
+public class RecommendationController {
 
-    @GetMapping("/{userId}/recommendations")
-    public ResponseEntity<?> getUserRecommendations(@PathVariable Long userId){
-            return ResponseEntity.ok(HttpStatus.OK);
+    @GetMapping("/recommendations/{userId}")
+    public ResponseEntity<?> getUserRecommendations(@PathVariable("userId") Long userId){
+        System.out.println(userId);
+        return ResponseEntity.ok().build();
     }
 
 }
