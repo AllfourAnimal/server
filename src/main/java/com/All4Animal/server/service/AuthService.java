@@ -9,6 +9,8 @@ import com.All4Animal.server.exception.AuthenticationFailedException;
 import com.All4Animal.server.repository.UserRepository;
 import com.All4Animal.server.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -72,5 +74,35 @@ public class AuthService {
                 user.getLoginId(),
                 user.getUsername()
         );
+    }
+
+    public Long getUserIdFromToken(String token) {
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw new AuthenticationFailedException("유효하지 않은 토큰입니다.");
+        }
+
+        Long userId = jwtTokenProvider.extractUserId(token);
+        if (userId == null) {
+            throw new AuthenticationFailedException("토큰에서 사용자 정보를 찾을 수 없습니다.");
+        }
+
+        return userId;
+    }
+
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationFailedException("인증된 사용자 정보를 찾을 수 없습니다.");
+        }
+
+        String loginId = authentication.getName();
+        if (loginId == null || loginId.isBlank() || "anonymousUser".equals(loginId)) {
+            throw new AuthenticationFailedException("인증된 사용자 정보를 찾을 수 없습니다.");
+        }
+
+        return userRepository.findByLoginId(loginId)
+                .map(Users::getUserId)
+                .orElseThrow(() -> new AuthenticationFailedException("사용자 정보를 찾을 수 없습니다."));
     }
 }

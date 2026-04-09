@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/favorite")
 @Tag(name = "Favorite", description = " API")
-@SecurityRequirements
 @RequiredArgsConstructor
 public class FavoriteController {
 

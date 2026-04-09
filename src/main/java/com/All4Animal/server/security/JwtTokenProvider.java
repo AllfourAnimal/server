@@ -38,16 +38,27 @@ public class JwtTokenProvider {
     }
 
     public String extractLoginId(String token) {
-        return extractClaims(token).getSubject();
+        return extractClaims(resolveToken(token)).getSubject();
+    }
+
+    public Long extractUserId(String token) {
+        return extractClaims(resolveToken(token)).get("userId", Long.class);
     }
 
     public boolean validateToken(String token) {
         try {
-            extractClaims(token);
+            extractClaims(resolveToken(token));
             return true;
         } catch (Exception exception) {
             return false;
         }
+    }
+
+    private String resolveToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return token;
     }
 
     private Claims extractClaims(String token) {
