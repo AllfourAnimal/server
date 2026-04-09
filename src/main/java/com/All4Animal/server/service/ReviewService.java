@@ -44,7 +44,7 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
         return new ReviewDetailResponse(
-                review.getReviewId(), review.getTitle(), review.getContent(), review.getCreatedAt());
+                review.getReviewId(), review.getTitle(), review.getContent(), review.getCreatedAt()); // url 관련 이야기 끝나면 추가
     }
 
     public ReviewResponse postReview(Long userId, ReviewRequest request){
