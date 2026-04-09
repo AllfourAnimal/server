@@ -19,12 +19,12 @@ public class UserPreferenceController {
     private final UserPreferenceService userPreferenceService;
     private final AuthService authService;
 
-    @PutMapping("/preferences")
-    public ResponseEntity<AnimalPreferenceResponse> putUserPreferences(
+    @PatchMapping("/preferences")
+    public ResponseEntity<AnimalPreferenceResponse> patchUserPreferences(
             @Valid @RequestBody AnimalPreferenceRequest request
     ){
         Long userId = authService.getCurrentUserId();
-        AnimalPreferenceResponse response = userPreferenceService.putUserPreferences(userId, request);
+        AnimalPreferenceResponse response = userPreferenceService.patchUserPreferences(userId, request);
         return ResponseEntity.ok(response);
     }
 
