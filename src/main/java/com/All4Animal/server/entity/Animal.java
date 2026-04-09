@@ -25,6 +25,12 @@ public class Animal {
         NEUTERED
     }
 
+    public enum AnimalType {
+        DOG,
+        CAT,
+        OTHER
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "animal_id")
@@ -32,6 +38,8 @@ public class Animal {
 
     @Column(unique = true)
     private String desertionNo;
+
+    private AnimalType animalType;
 
     private String species;
 

@@ -7,6 +7,8 @@ public class AnimalApiResponse {
 
     private String desertionNo;
 
+    private String upKindNm;
+
     private String popfile1;
 
     private String popfile2;

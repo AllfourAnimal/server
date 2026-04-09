@@ -75,8 +75,11 @@ public class AnimalService {
     }
 
     private Animal convertToEntity(AnimalApiResponse dto) {
+        Animal.AnimalType type = convertToAnimalType(dto);
+
         return Animal.builder()
                 .desertionNo(dto.getDesertionNo())
+                .animalType(type)
                 .species(dto.getKindNm())
                 .weight(parseWeight(dto.getWeight()))
                 .animal_age(parseAge(dto.getAge()))
@@ -117,5 +120,18 @@ public class AnimalService {
             return Animal.Gender.FEMALE;
 
         return Animal.Gender.MALE;
+    }
+
+    private Animal.AnimalType convertToAnimalType(AnimalApiResponse dto) {
+        String upKind = dto.getUpKindNm();
+
+        if("개".equals(upKind))
+            return Animal.AnimalType.DOG;
+
+        if("고양이".equals(upKind))
+            return Animal.AnimalType.CAT;
+
+
+        return Animal.AnimalType.OTHER;
     }
 }
