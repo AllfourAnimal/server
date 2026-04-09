@@ -1,6 +1,7 @@
 package com.All4Animal.server.entity;
 
 
+import com.All4Animal.server.dto.response.ReviewResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,4 +35,5 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "animal_id", nullable = false)
     private Animal animal;
+
 }
