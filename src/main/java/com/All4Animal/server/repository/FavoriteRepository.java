@@ -2,6 +2,7 @@ package com.All4Animal.server.repository;
 
 import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.entity.Favorite;
+import com.All4Animal.server.entity.Story;
 import com.All4Animal.server.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
