@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RecommendationController {
 
-    @GetMapping("/recommendations/{userId}")
-    public ResponseEntity<?> getUserRecommendations(@PathVariable("userId") Long userId){
-        System.out.println(userId);
+    @GetMapping("/recommendations")
+    public ResponseEntity<?> getUserRecommendations(){
         return ResponseEntity.ok().build();
     }
 
