@@ -4,8 +4,10 @@ import com.All4Animal.server.entity.UserPreference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
+@Setter
 @Getter
 public class AnimalPreferenceRequest {
     @Schema(description = "선호 동물 종류", example = "DOG")
