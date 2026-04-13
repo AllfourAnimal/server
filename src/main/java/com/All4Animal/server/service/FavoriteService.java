@@ -24,21 +24,17 @@ public class FavoriteService {
     private final StoryRepository storyRepository;
 
     @Transactional
-    public String toggleFavorite(Long userId, Long animalId) {
+    public String toggleFavorite(Long animalId) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("로그인이 필요한 서비스입니다.");
         }
 
-        Users user = usersRepository.findById(userId)
+        String loginId = authentication.getName();
+
+        Users user = usersRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        String loginIdFromToken = authentication.getName();
-
-        if (!user.getLoginId().equals(loginIdFromToken)) {
-            throw new RuntimeException("본인의 계정으로만 찜하기가 가능합니다.");
-        }
 
         Animal animal = animalRepository.findById(animalId)
                 .orElseThrow(() -> new RuntimeException("동물을 찾을 수 없습니다."));
@@ -89,22 +85,4 @@ public class FavoriteService {
                 })
                 .collect(Collectors.toList());
     }
-
-//    @Transactional
-//    public List<Animal> getMyFavoriteAnimals() {
-//        var authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            throw new RuntimeException("로그인이 필요한 서비스입니다.");
-//        }
-//
-//        String loginId = authentication.getName();
-//
-//        Users user = usersRepository.findByLoginId(loginId)
-//                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-//
-//        return favoriteRepository.findAllByUser(user).stream()
-//                .map(Favorite::getAnimal)
-//                .collect(Collectors.toList());
-//    }
 }

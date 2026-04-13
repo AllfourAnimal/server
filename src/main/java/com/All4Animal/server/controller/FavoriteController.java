@@ -23,9 +23,8 @@ public class FavoriteController {
     @PostMapping("/{animalId}")
     @Operation(summary = "찜하기 토글", description = "이미 찜했으면 취소, 안 했으면 등록합니다.")
     public ResponseEntity<String> toggleFavorite(
-            @RequestParam Long userId, // 테스트를 위해 파라미터로 받음
             @PathVariable Long animalId) {
-        String result = favoriteService.toggleFavorite(userId, animalId);
+        String result = favoriteService.toggleFavorite(animalId);
         return ResponseEntity.ok(result);
     }
 
