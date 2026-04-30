@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "Animal") // table 이름은 Animal로 설정
 @NoArgsConstructor // 기본 생성자 자동 제작
 @AllArgsConstructor // 전체 생성자 자동 제작
-@Data // Getter, Setter, toString, equlas과 같은 기본 메서드 자동 제작
+@Data // Getter, Setter, toString, equals과 같은 기본 메서드 자동 제작
 @Builder // 빌더 패던 적용
 public class Animal {
     public enum Gender{

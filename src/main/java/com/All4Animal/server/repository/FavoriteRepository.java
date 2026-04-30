@@ -11,8 +11,6 @@ import java.util.Optional;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     boolean existsByUserAndAnimal(Users user, Animal animal);
-
     Optional<Favorite> findByUserAndAnimal(Users user, Animal animal);
-
     List<Favorite> findAllByUser(Users user);
 }

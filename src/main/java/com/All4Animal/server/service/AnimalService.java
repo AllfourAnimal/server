@@ -18,17 +18,20 @@ import java.util.List;
 public class AnimalService {
 
     private final AnimalRepository animalRepository;
+    private final AnimalImageRepository animalImageRepository;
+
     private final AnimalApiClient animalApiClient;
 
-    private final AnimalImageRepository animalImageRepository;
+    public List<Animal> getMetroplitanAnimals() {
+        return animalRepository.findByCareAddrStartingWithOrCareAddrStartingWithOrCareAddrStartingWithOrderByCreatedAtDesc(
+                "서울특별시", "경기도", "인천광역시"
+        );
+    }
 
     public List<Animal> getAllAnimals() {
         return animalRepository.findAllByOrderByCreatedAtDesc();
     }
-
-    public List<AnimalImage> getImageByAnimalId(Long animalId) {
-        return animalImageRepository.findByAnimal_AnimalId(animalId);
-    }
+    public List<AnimalImage> getImageByAnimalId(Long animalId) { return animalImageRepository.findByAnimal_AnimalId(animalId); }
 
     @Transactional
     public void syncAnimalsWithApi() { // 동물 데이터 불러오기
@@ -44,7 +47,7 @@ public class AnimalService {
 
     @Transactional
     public void saveApiAnimals(List<AnimalApiResponse> apiItems) { // 동물 데이터 불러오고 DB 저장
-        for(AnimalApiResponse item : apiItems) {
+        for(AnimalApiResponse item : apiItems) { // 이미 존재하는 DesertionNo는 스킵
             if (animalRepository.existsByDesertionNo(item.getDesertionNo())) {
                 System.out.println(item.getDesertionNo());
                 continue;
@@ -54,6 +57,7 @@ public class AnimalService {
 
             System.out.println("동기화 시작: " + item.getDesertionNo());
 
+            // 외부 api에서 받은 사진 주소를 이미지 객체로 변환해서 넣음.
             if(item.getPopfile1() != null && !item.getPopfile1().isEmpty()) {
                 animal.getImages().add(AnimalImage.builder()
                         .imageUrl(item.getPopfile1())
@@ -75,7 +79,7 @@ public class AnimalService {
     }
 
     private Animal convertToEntity(AnimalApiResponse dto) {
-        Animal.AnimalType type = convertToAnimalType(dto);
+        Animal.AnimalType type = convertToAnimalType(dto); // 개, 고양이 매핑
 
         return Animal.builder()
                 .desertionNo(dto.getDesertionNo())
