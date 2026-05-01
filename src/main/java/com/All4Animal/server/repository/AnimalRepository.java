@@ -10,4 +10,5 @@ import java.util.List;
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
     boolean existsByDesertionNo(String desertionNo);
     List<Animal> findAllByOrderByCreatedAtDesc();
+
 }
