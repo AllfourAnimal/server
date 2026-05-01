@@ -8,10 +8,12 @@ import com.All4Animal.server.repository.AnimalImageRepository;
 import com.All4Animal.server.repository.AnimalRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,20 +21,14 @@ public class AnimalService {
 
     private final AnimalRepository animalRepository;
     private final AnimalImageRepository animalImageRepository;
-
     private final AnimalApiClient animalApiClient;
-
-    public List<Animal> getMetroplitanAnimals() {
-        return animalRepository.findByCareAddrStartingWithOrCareAddrStartingWithOrCareAddrStartingWithOrderByCreatedAtDesc(
-                "서울특별시", "경기도", "인천광역시"
-        );
-    }
 
     public List<Animal> getAllAnimals() {
         return animalRepository.findAllByOrderByCreatedAtDesc();
     }
     public List<AnimalImage> getImageByAnimalId(Long animalId) { return animalImageRepository.findByAnimal_AnimalId(animalId); }
 
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void syncAnimalsWithApi() { // 동물 데이터 불러오기
         List<AnimalApiResponse> apiItems = animalApiClient.fetchAnimals();
@@ -47,7 +43,17 @@ public class AnimalService {
 
     @Transactional
     public void saveApiAnimals(List<AnimalApiResponse> apiItems) { // 동물 데이터 불러오고 DB 저장
-        for(AnimalApiResponse item : apiItems) { // 이미 존재하는 DesertionNo는 스킵
+
+        // api id 목록 추출
+        List<String> apiIDList = apiItems.stream()
+                .map(AnimalApiResponse::getDesertionNo)
+                .collect(Collectors.toList());
+
+        // 사라진 animal 삭제
+        animalRepository.deleteByDesertionNoNotIn(apiIDList);
+
+        for(AnimalApiResponse item : apiItems) {
+            // 이미 존재하는 DesertionNo는 스킵
             if(animalRepository.existsByDesertionNo(item.getDesertionNo())) {
                 System.out.println(item.getDesertionNo());
                 continue;
@@ -86,6 +92,7 @@ public class AnimalService {
     private Animal convertToEntity(AnimalApiResponse dto) {
         Animal.AnimalType type = convertToAnimalType(dto); // 개, 고양이 매핑
 
+
         return Animal.builder()
                 .desertionNo(dto.getDesertionNo())
                 .animalType(type)
@@ -115,6 +122,10 @@ public class AnimalService {
     private Integer parseAge(String ageStr) {
         try {
             String numeric = ageStr.replaceAll("[^0-9]", "");
+
+            if(Integer.parseInt(numeric) > 100000)
+                numeric = String.valueOf(Integer.parseInt(numeric) / 100);
+
             return Integer.parseInt(numeric);
         } catch (Exception e) {
             return null;
