@@ -22,9 +22,6 @@ public class AnimalPreferenceRequest {
     @Schema(description = "선호 연령대", example = "ADULT")
     private UserPreference.PreferredAgeGroup age;
 
-    @Schema(description = "중성화 여부", example = "YES")
-    private UserPreference.PreferredNeuteredStatus status;
-
     @Schema(description = "선호 성격", example = "활발함, 사람을 좋아함")
     private String personalities;
 

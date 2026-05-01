@@ -1,5 +1,6 @@
 package com.All4Animal.server.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +19,13 @@ import java.util.List;
 @Builder
 public class Users {
 
+    @Schema(description = "사용자 주거 형태")
     public enum Housing{
+        @Schema(description = "아파트 또는 빌라")
         APARTMENT_VILLA,
+        @Schema(description = "단독주택")
         DETACHED_HOUSE,
+        @Schema(description = "마당이 있는 집")
         HOUSE_WITH_YARD
     }
 
@@ -53,8 +58,10 @@ public class Users {
     @Column(nullable = false)
     private boolean isExperience;
 
+    @Schema(description = "사용자 주거 형태")
     private Housing housingType;
 
+    @Schema(description = "하루 평균 집을 비우는 시간")
     private Integer emptyTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

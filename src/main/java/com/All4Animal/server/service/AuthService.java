@@ -46,6 +46,8 @@ public class AuthService {
                 .birthYear(request.getBirthYear())
                 .location(request.getLocation())
                 .isExperience(request.getIsExperience())
+                .housingType(request.getHousingType())
+                .emptyTime(request.getEmptyTime())
                 .createdAt(LocalDateTime.now())
                 .build();
 

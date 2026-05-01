@@ -21,6 +21,16 @@ public class UserPreferenceService {
     private final UserPreferenceRepository userPreferenceRepository;
     private final UserRepository userRepository;
 
+    public AnimalPreferenceResponse getUserPreferences(Long userId) {
+        Users user = getUser(userId);
+
+        UserPreference preference = userPreferenceRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("선호 데이터가 없습니다."));
+
+        return AnimalPreferenceResponse.toResponse(preference);
+
+    }
+
     @Transactional
     public AnimalPreferenceResponse patchUserPreferences(Long userId, AnimalPreferenceRequest request) {
         validatePatchRequest(request);
@@ -57,7 +67,6 @@ public class UserPreferenceService {
                 .preferredSize(request.getSize())
                 .preferredGender(request.getGender())
                 .preferredAgeGroup(request.getAge())
-                .preferredNeuteredStatus(request.getStatus())
                 .preferredPersonality(request.getPersonalities())
                 .build();
     }
@@ -74,9 +83,6 @@ public class UserPreferenceService {
         }
         if (request.getAge() != null) {
             preference.setPreferredAgeGroup(request.getAge());
-        }
-        if (request.getStatus() != null) {
-            preference.setPreferredNeuteredStatus(request.getStatus());
         }
         if (request.getPersonalities() != null) {
             preference.setPreferredPersonality(request.getPersonalities());
@@ -96,7 +102,6 @@ public class UserPreferenceService {
                 || request.getSize() != null
                 || request.getGender() != null
                 || request.getAge() != null
-                || request.getStatus() != null
                 || StringUtils.hasText(request.getPersonalities());
     }
 
@@ -105,7 +110,6 @@ public class UserPreferenceService {
                 && request.getSize() != null
                 && request.getGender() != null
                 && request.getAge() != null
-                && request.getStatus() != null
                 && StringUtils.hasText(request.getPersonalities());
     }
 
