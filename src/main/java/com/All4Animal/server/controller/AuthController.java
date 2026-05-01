@@ -123,6 +123,69 @@ public class AuthController {
                     )
             )
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = SignUpRequest.class),
+                    examples = {
+                            @ExampleObject(
+                                    name = "housing_apartment_villa",
+                                    summary = "주거 형태: 아파트/빌라",
+                                    value = """
+                    {
+                      "loginId": "all4animal",
+                      "password": "password1234",
+                      "passwordConfirm": "password1234",
+                      "name": "홍길동",
+                      "phone": "01012345678",
+                      "birthYear": 1998,
+                      "location": "서울 마포구",
+                      "isExperience": true,
+                      "housingType": "APARTMENT_VILLA",
+                      "emptyTime": 6
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "housing_detached_house",
+                                    summary = "주거 형태: 단독주택",
+                                    value = """
+                    {
+                      "loginId": "animallover",
+                      "password": "password1234",
+                      "passwordConfirm": "password1234",
+                      "name": "김영희",
+                      "phone": "01087654321",
+                      "birthYear": 1995,
+                      "location": "경기도 용인시",
+                      "isExperience": false,
+                      "housingType": "DETACHED_HOUSE",
+                      "emptyTime": 4
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "housing_house_with_yard",
+                                    summary = "주거 형태: 마당이 있는 집",
+                                    value = """
+                    {
+                      "loginId": "yardhome",
+                      "password": "password1234",
+                      "passwordConfirm": "password1234",
+                      "name": "박민수",
+                      "phone": "01055556666",
+                      "birthYear": 1992,
+                      "location": "강원도 춘천시",
+                      "isExperience": true,
+                      "housingType": "HOUSE_WITH_YARD",
+                      "emptyTime": 3
+                    }
+                    """
+                            )
+                    }
+            )
+    )
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest request) {
         SignUpResponse response = authService.signup(request);

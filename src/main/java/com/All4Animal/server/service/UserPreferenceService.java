@@ -67,7 +67,6 @@ public class UserPreferenceService {
                 .preferredSize(request.getSize())
                 .preferredGender(request.getGender())
                 .preferredAgeGroup(request.getAge())
-                .preferredNeuteredStatus(request.getStatus())
                 .preferredPersonality(request.getPersonalities())
                 .build();
     }
@@ -84,9 +83,6 @@ public class UserPreferenceService {
         }
         if (request.getAge() != null) {
             preference.setPreferredAgeGroup(request.getAge());
-        }
-        if (request.getStatus() != null) {
-            preference.setPreferredNeuteredStatus(request.getStatus());
         }
         if (request.getPersonalities() != null) {
             preference.setPreferredPersonality(request.getPersonalities());
@@ -106,7 +102,6 @@ public class UserPreferenceService {
                 || request.getSize() != null
                 || request.getGender() != null
                 || request.getAge() != null
-                || request.getStatus() != null
                 || StringUtils.hasText(request.getPersonalities());
     }
 
@@ -115,7 +110,6 @@ public class UserPreferenceService {
                 && request.getSize() != null
                 && request.getGender() != null
                 && request.getAge() != null
-                && request.getStatus() != null
                 && StringUtils.hasText(request.getPersonalities());
     }
 
