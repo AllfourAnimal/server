@@ -21,6 +21,16 @@ public class UserPreferenceService {
     private final UserPreferenceRepository userPreferenceRepository;
     private final UserRepository userRepository;
 
+    public AnimalPreferenceResponse getUserPreferences(Long userId) {
+        Users user = getUser(userId);
+
+        UserPreference preference = userPreferenceRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("선호 데이터가 없습니다."));
+
+        return AnimalPreferenceResponse.toResponse(preference);
+
+    }
+
     @Transactional
     public AnimalPreferenceResponse patchUserPreferences(Long userId, AnimalPreferenceRequest request) {
         validatePatchRequest(request);

@@ -25,6 +25,14 @@ public class UserPreferenceController {
     private final UserPreferenceService userPreferenceService;
     private final AuthService authService;
 
+    @GetMapping("/preferences")
+    public ResponseEntity<AnimalPreferenceResponse> getUserPreferences(){
+        Long userId = authService.getCurrentUserId();
+        AnimalPreferenceResponse response = userPreferenceService.getUserPreferences(userId);
+        return ResponseEntity.ok(response);
+    }
+
+
     @Operation(summary = "선호 정보 수정", description = "선호 정보가 있으면 요청에 포함된 필드만 수정하고, 없으면 전체 필드 요청 시 생성합니다.")
     @ApiResponses({
             @ApiResponse(
