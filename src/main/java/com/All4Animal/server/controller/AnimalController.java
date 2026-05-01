@@ -1,12 +1,14 @@
 package com.All4Animal.server.controller;
 
 import com.All4Animal.server.entity.Animal;
+import com.All4Animal.server.entity.AnimalImage;
 import com.All4Animal.server.service.AnimalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,5 +40,17 @@ public class AnimalController {
     public ResponseEntity<List<Animal>> getAllAnimals() {
         List<Animal> animals = animalService.getAllAnimals();
         return ResponseEntity.ok(animals);
+    }
+
+    @GetMapping("/{animalId}/images")
+    @Operation(summary = "특정 동물의 이미지 조회", description = "동물 ID를 이용해 해당 동물의 모든 이미지 URL을 가져옵니다.")
+    public ResponseEntity<List<String>> getAnimalImages(@PathVariable Long animalId) {
+        List<AnimalImage> images = animalService.getImageByAnimalId(animalId);
+
+        List<String> imageUrls = images.stream()
+                .map(AnimalImage::getImageUrl)
+                .toList();
+
+        return ResponseEntity.ok(imageUrls);
     }
 }

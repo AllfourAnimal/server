@@ -8,19 +8,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
-@Entity
-@Table(name = "Animal")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
+@Entity // Animal 클래스를 DB 테이블과 연결된 엔티티라고 선언
+@Table(name = "Animal") // table 이름은 Animal로 설정
+@NoArgsConstructor // 기본 생성자 자동 제작
+@AllArgsConstructor // 전체 생성자 자동 제작
+@Data // Getter, Setter, toString, equals과 같은 기본 메서드 자동 제작
+@Builder // 빌더 패던 적용
 public class Animal {
     public enum Gender{
         MALE,
         FEMALE,
         NEUTERED
+    }
+
+    public enum AnimalType {
+        DOG,
+        CAT,
+        OTHER
     }
 
     @Id
@@ -30,6 +38,8 @@ public class Animal {
 
     @Column(unique = true)
     private String desertionNo;
+
+    private AnimalType animalType;
 
     private String species;
 
@@ -56,4 +66,8 @@ public class Animal {
     private String careTel;
 
     private String careAddr;
+
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AnimalImage> images = new ArrayList<>();
 }

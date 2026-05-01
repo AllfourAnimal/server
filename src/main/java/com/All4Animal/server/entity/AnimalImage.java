@@ -1,15 +1,17 @@
 package com.All4Animal.server.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "AnimalImage")
+@Table(name = "animal_image")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,11 +26,11 @@ public class AnimalImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id")
+    @JsonIgnore
     private Animal animal;
 
     private String imageUrl;
 
-    private boolean isMain; // 메인 이미지에 대한 여부
-
+    @CreatedDate
     private LocalDateTime createdAt;
 }

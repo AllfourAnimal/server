@@ -3,6 +3,8 @@ package com.All4Animal.server.service;
 import com.All4Animal.server.client.AnimalApiClient;
 import com.All4Animal.server.dto.response.api.AnimalApiResponse;
 import com.All4Animal.server.entity.Animal;
+import com.All4Animal.server.entity.AnimalImage;
+import com.All4Animal.server.repository.AnimalImageRepository;
 import com.All4Animal.server.repository.AnimalRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +18,23 @@ import java.util.List;
 public class AnimalService {
 
     private final AnimalRepository animalRepository;
+    private final AnimalImageRepository animalImageRepository;
+
     private final AnimalApiClient animalApiClient;
+
+    public List<Animal> getMetroplitanAnimals() {
+        return animalRepository.findByCareAddrStartingWithOrCareAddrStartingWithOrCareAddrStartingWithOrderByCreatedAtDesc(
+                "서울특별시", "경기도", "인천광역시"
+        );
+    }
 
     public List<Animal> getAllAnimals() {
         return animalRepository.findAllByOrderByCreatedAtDesc();
     }
+    public List<AnimalImage> getImageByAnimalId(Long animalId) { return animalImageRepository.findByAnimal_AnimalId(animalId); }
 
     @Transactional
-    public void syncAnimalsWithApi() {
+    public void syncAnimalsWithApi() { // 동물 데이터 불러오기
         List<AnimalApiResponse> apiItems = animalApiClient.fetchAnimals();
 
         if (apiItems == null || apiItems.isEmpty()) {
@@ -35,21 +46,49 @@ public class AnimalService {
     }
 
     @Transactional
-    public void saveApiAnimals(List<AnimalApiResponse> apiItems) {
-        for(AnimalApiResponse item : apiItems) {
-            if (animalRepository.existsByDesertionNo(item.getDesertionNo())) {
+    public void saveApiAnimals(List<AnimalApiResponse> apiItems) { // 동물 데이터 불러오고 DB 저장
+        for(AnimalApiResponse item : apiItems) { // 이미 존재하는 DesertionNo는 스킵
+            if(animalRepository.existsByDesertionNo(item.getDesertionNo())) {
                 System.out.println(item.getDesertionNo());
                 continue;
             }
 
+            if(!item.getProcessState().equals("보호중")) {
+                System.out.println(item.getProcessState() + "인 상태 제외");
+                continue;
+            }
+
             Animal animal = convertToEntity(item);
+
+            System.out.println("동기화 시작: " + item.getDesertionNo());
+
+            // 외부 api에서 받은 사진 주소를 이미지 객체로 변환해서 넣음.
+            if(item.getPopfile1() != null && !item.getPopfile1().isEmpty()) {
+                animal.getImages().add(AnimalImage.builder()
+                        .imageUrl(item.getPopfile1())
+                        .animal(animal)
+                        .createdAt(LocalDateTime.now())
+                        .build());
+            }
+
+            if(item.getPopfile2() != null && !item.getPopfile2().isEmpty()) {
+                animal.getImages().add(AnimalImage.builder()
+                        .imageUrl(item.getPopfile2())
+                        .animal(animal)
+                        .createdAt(LocalDateTime.now())
+                        .build());
+            }
+
             animalRepository.save(animal);
         }
     }
 
     private Animal convertToEntity(AnimalApiResponse dto) {
+        Animal.AnimalType type = convertToAnimalType(dto); // 개, 고양이 매핑
+
         return Animal.builder()
                 .desertionNo(dto.getDesertionNo())
+                .animalType(type)
                 .species(dto.getKindNm())
                 .weight(parseWeight(dto.getWeight()))
                 .animal_age(parseAge(dto.getAge()))
@@ -90,5 +129,18 @@ public class AnimalService {
             return Animal.Gender.FEMALE;
 
         return Animal.Gender.MALE;
+    }
+
+    private Animal.AnimalType convertToAnimalType(AnimalApiResponse dto) {
+        String upKind = dto.getUpKindNm();
+
+        if("개".equals(upKind))
+            return Animal.AnimalType.DOG;
+
+        if("고양이".equals(upKind))
+            return Animal.AnimalType.CAT;
+
+
+        return Animal.AnimalType.OTHER;
     }
 }
