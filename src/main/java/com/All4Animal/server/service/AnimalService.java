@@ -48,8 +48,13 @@ public class AnimalService {
     @Transactional
     public void saveApiAnimals(List<AnimalApiResponse> apiItems) { // 동물 데이터 불러오고 DB 저장
         for(AnimalApiResponse item : apiItems) { // 이미 존재하는 DesertionNo는 스킵
-            if (animalRepository.existsByDesertionNo(item.getDesertionNo())) {
+            if(animalRepository.existsByDesertionNo(item.getDesertionNo())) {
                 System.out.println(item.getDesertionNo());
+                continue;
+            }
+
+            if(!item.getProcessState().equals("보호중")) {
+                System.out.println(item.getProcessState() + "인 상태 제외");
                 continue;
             }
 

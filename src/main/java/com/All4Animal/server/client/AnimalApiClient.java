@@ -17,22 +17,6 @@ public class AnimalApiClient {
     private final String apiUrl = "http://apis.data.go.kr/1543061/abandonmentPublicService_v2/abandonmentPublic_v2";
     private final String[] cityCode = {"6110000", "6410000", "6280000"};
 
-//    public List<AnimalApiResponse> fetchAnimals() {
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        String url = UriComponentsBuilder.fromUriString(apiUrl)
-//                .queryParam("serviceKey", serviceKey)
-//                .queryParam("numOfRows", "1000")
-//                .queryParam("pageNo", "1")
-//                .toUriString();
-//
-//        AnimalApiWrapper response = restTemplate.getForObject(url, AnimalApiWrapper.class);
-//
-//        return (response != null && response.getBody() != null)
-//                ? response.getBody().getItems()
-//                : Collections.emptyList();
-//    }
-
     public List<AnimalApiResponse> fetchAnimals() {
         RestTemplate restTemplate = new RestTemplate();
         List<AnimalApiResponse> allAnimals = new ArrayList<>();
