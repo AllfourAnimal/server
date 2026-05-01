@@ -8,12 +8,12 @@ import com.All4Animal.server.dto.response.LoginResponse;
 import com.All4Animal.server.dto.response.SignUpResponse;
 import com.All4Animal.server.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,11 @@ public class AuthController {
             )
     })
     @GetMapping("/checkId")
-    public ResponseEntity<?> isLoginIdDuplicated(@Valid @RequestParam String loginId){
+    public ResponseEntity<?> isLoginIdDuplicated(
+            @Valid
+            @Parameter(description = "중복 확인할 로그인 아이디", example = "all4animal")
+            @RequestParam String loginId
+    ){
         boolean duplicated = authService.isLoginIdDuplicated(loginId);
         if(duplicated){
             return ResponseEntity.ok(LoginIdCheckResponse.duplicated());
