@@ -25,6 +25,95 @@ public class UserPreferenceController {
     private final UserPreferenceService userPreferenceService;
     private final AuthService authService;
 
+    @Operation(summary = "선호 정보 조회", description = "로그인한 사용자의 현재 선호 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "선호 정보 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AnimalPreferenceResponse.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "dog_preference",
+                                            summary = "강아지 선호 예시",
+                                            value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "MEDIUM",
+                      "gender": "FEMALE",
+                      "age": "ADULT",
+                      "personalities": "활발함, 사람 좋아함",
+                      "updatedAt": "2026-05-01T10:30:00"
+                    }
+                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "cat_preference",
+                                            summary = "고양이 선호 예시",
+                                            value = """
+                    {
+                      "animalType": "CAT",
+                      "size": "SMALL",
+                      "gender": "MALE",
+                      "age": "YOUNG",
+                      "personalities": "호기심 많음",
+                      "updatedAt": "2026-05-01T10:35:00"
+                    }
+                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "any_preference",
+                                            summary = "상관없음 예시",
+                                            value = """
+                    {
+                      "animalType": "ANY",
+                      "size": "ANY",
+                      "gender": "ANY",
+                      "age": "ANY",
+                      "personalities": "온순함",
+                      "updatedAt": "2026-05-01T10:40:00"
+                    }
+                    """
+                                    )
+                            }
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "선호 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "preference_not_found",
+                                    value = """
+                    {
+                      "code": "BAD_REQUEST",
+                      "message": "선호 데이터가 없습니다."
+                    }
+                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "unauthorized",
+                                    value = """
+                    {
+                      "code": "UNAUTHORIZED",
+                      "message": "인증 정보가 유효하지 않습니다."
+                    }
+                    """
+                            )
+                    )
+            )
+    })
     @GetMapping("/preferences")
     public ResponseEntity<AnimalPreferenceResponse> getUserPreferences(){
         Long userId = authService.getCurrentUserId();
