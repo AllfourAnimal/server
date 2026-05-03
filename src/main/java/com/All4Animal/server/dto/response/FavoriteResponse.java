@@ -16,8 +16,13 @@ public class FavoriteResponse {
     }
 
     private String speices;
-    private List<AnimalImage> images;
+
+//    private List<AnimalImage> images;
+    private String thumbnailImageUrl;
+
     private Long animalAge;
+
     private Gender animlSex;
+
     private String animalStory;
 }

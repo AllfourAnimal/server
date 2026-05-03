@@ -75,9 +75,14 @@ public class FavoriteService {
                             .map(Story::getStoryContent)
                             .orElse("아직 생성된 스토리가 없습니다.");
 
+                    String thumbnailImageUrl = animal.getImages().stream()
+                            .findFirst()
+                            .map(AnimalImage::getImageUrl)
+                            .orElse(null);
+
                     return new FavoriteResponse(
                             animal.getSpecies(),
-                            animal.getImages(), // AnimalImage 리스트
+                            thumbnailImageUrl,
                             animal.getAnimal_age().longValue(),
                             FavoriteResponse.Gender.valueOf(animal.getAnimal_sex().name()),
                             storyContent

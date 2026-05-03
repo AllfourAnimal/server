@@ -86,22 +86,22 @@ public class FavoriteController {
                             schema = @Schema(implementation = FavoriteResponse.class),
                             examples = @ExampleObject(
                                     value = """
-                                  [
-                                    {
-                                      "favoriteId": 10,
-                                      "animalId": 1,
-                                      "species": "푸들",
-                                      "happenPlace": "서울특별시 강남구",
-                                      "imageUrl": "https://example.com/animal1.jpg"
-                                    },
-                                    {
-                                      "favoriteId": 11,
-                                      "animalId": 4,
-                                      "species": "코리안 숏헤어",
-                                      "happenPlace": "경기도 수원시",
-                                      "imageUrl": "https://example.com/animal4.jpg"
-                                    }
-                                  ]
+                                            [
+                                              {
+                                                "speices": "강아지",
+                                                "thumbnailImageUrl": "http://example.image.url/test1.jpg",
+                                                "animalAge": 2023,
+                                                "animlSex": "FEMALE",
+                                                "animalStory": "동물 세부사항 예시"
+                                              },
+                                              {
+                                                "speices": "고양이",
+                                                "thumbnailImageUrl": "http://example.image.url/test2.jpg",
+                                                "animalAge": 2026,
+                                                "animlSex": "MALE",
+                                                "animalStory": "동물 세부사항 예시"
+                                              }
+                                            ]
                                   """
                             )
                     )
