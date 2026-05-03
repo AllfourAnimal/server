@@ -11,6 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")                                      // 모든 API 경로
                 .allowedOrigins(
                         "http://localhost:3000",
+                        "http://localhost:8080",
                         "https://all4animal.site",
                         "https://www.all4animal.site"
                 )// 허용할 출처 (URL)
