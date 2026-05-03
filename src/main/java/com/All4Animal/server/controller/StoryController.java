@@ -5,6 +5,7 @@ import com.All4Animal.server.service.StoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Table;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,13 @@ public class StoryController {
         return "모든 동물의 스토리 생성 시작 및 완료";
     }
 
-    @PostMapping("/{animalId}")
+    @GetMapping("/{animalId}")
     @Operation(summary = "특정 동물에 대한 스토리 조회", description = "동물 Id를 사용하여 동물에 대한 스토리 조회")
     public String getStory(@PathVariable Long animalId) {
         Story story = storyService.getAnimalStory(animalId);
 
         return story.getStoryContent();
     }
+
 
 }
