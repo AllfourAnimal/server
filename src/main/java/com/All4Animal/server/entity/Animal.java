@@ -49,6 +49,7 @@ public class Animal {
 
     private String persona;
 
+    @Enumerated(EnumType.STRING)
     private Gender animal_sex;
 
     private boolean isVaccinated;

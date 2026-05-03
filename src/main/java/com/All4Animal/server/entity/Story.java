@@ -23,5 +23,6 @@ public class Story {
     @JoinColumn(name = "animal_id")
     private Animal animal;
 
+    @Column(columnDefinition = "TEXT")
     private String storyContent;
 }
