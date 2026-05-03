@@ -1,6 +1,9 @@
 package com.All4Animal.server.service;
 
 import com.All4Animal.server.client.AnimalApiClient;
+import com.All4Animal.server.dto.request.AnimalSearchRequest;
+import com.All4Animal.server.dto.response.AnimalFilterResponse;
+import com.All4Animal.server.dto.response.AnimalResponse;
 import com.All4Animal.server.dto.response.api.AnimalApiResponse;
 import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.entity.AnimalImage;
@@ -23,10 +26,23 @@ public class AnimalService {
     private final AnimalImageRepository animalImageRepository;
     private final AnimalApiClient animalApiClient;
 
-    public List<Animal> getAllAnimals() {
-        return animalRepository.findAllByOrderByCreatedAtDesc();
+    public List<AnimalResponse> getAllAnimals() {
+        return animalRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(AnimalResponse::from)
+                .toList();
     }
     public List<AnimalImage> getImageByAnimalId(Long animalId) { return animalImageRepository.findByAnimal_AnimalId(animalId); }
+
+    public List<AnimalFilterResponse> searchAnimals(AnimalSearchRequest request) {
+        return animalRepository.searchAnimals(
+                        request.getKeyword(),
+                        request.getCareAddr(),
+                        request.getAnimalType()
+                ).stream()
+                .map(AnimalFilterResponse::from)
+                .toList();
+    }
 
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
