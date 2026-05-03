@@ -2,7 +2,6 @@ package com.All4Animal.server.service;
 
 import com.All4Animal.server.client.AnimalApiClient;
 import com.All4Animal.server.dto.request.AnimalSearchRequest;
-import com.All4Animal.server.dto.response.AnimalFilterResponse;
 import com.All4Animal.server.dto.response.AnimalResponse;
 import com.All4Animal.server.dto.response.AnimalSearchResponse;
 import com.All4Animal.server.dto.response.api.AnimalApiResponse;
@@ -12,8 +11,11 @@ import com.All4Animal.server.repository.AnimalImageRepository;
 import com.All4Animal.server.repository.AnimalRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +35,20 @@ public class AnimalService {
                 .map(AnimalResponse::from)
                 .toList();
     }
-    public List<AnimalImage> getImageByAnimalId(Long animalId) { return animalImageRepository.findByAnimal_AnimalId(animalId); }
+
+    public List<AnimalResponse> getAnimalsWithPaging(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return animalRepository.findAll(pageable)
+                .getContent()
+                .stream()
+                .map(AnimalResponse::from)
+                .toList();
+    }
+
+    public List<AnimalImage> getImageByAnimalId(Long animalId) {
+        return animalImageRepository.findByAnimal_AnimalId(animalId);
+    }
 
     public List<AnimalSearchResponse> searchAnimals(AnimalSearchRequest request) {
         return animalRepository.searchAnimals(

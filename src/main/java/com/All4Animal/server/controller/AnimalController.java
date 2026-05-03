@@ -128,8 +128,12 @@ public class AnimalController {
                     )
             )
     })
-    public ResponseEntity<List<AnimalResponse>> getAllAnimals() {
-        List<AnimalResponse> animals = animalService.getAllAnimals();
+    public ResponseEntity<List<AnimalResponse>> getAllAnimals(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        List<AnimalResponse> animals = animalService.getAnimalsWithPaging(page, size);
+
         return ResponseEntity.ok(animals);
     }
 
