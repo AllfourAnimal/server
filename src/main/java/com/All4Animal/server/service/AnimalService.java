@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
@@ -28,13 +27,6 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
     private final AnimalImageRepository animalImageRepository;
     private final AnimalApiClient animalApiClient;
-
-    public List<AnimalResponse> getAllAnimals() {
-        return animalRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(AnimalResponse::from)
-                .toList();
-    }
 
     public List<AnimalResponse> getAnimalsWithPaging(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

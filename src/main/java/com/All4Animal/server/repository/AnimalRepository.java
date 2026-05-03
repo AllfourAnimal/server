@@ -16,8 +16,6 @@ public interface AnimalRepository extends JpaRepository<Animal, Long>, JpaSpecif
 
     boolean existsByDesertionNo(String desertionNo);
 
-    List<Animal> findAllByOrderByCreatedAtDesc();
-
     void deleteByDesertionNoNotIn(List<String> animals);
 
     @Query("""
