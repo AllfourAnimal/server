@@ -36,6 +36,7 @@ public class SwaggerConfig {
                 return new OpenAPI()
                         .servers(List.of(
                                 new Server().url("https://all4animal.site")
+//                                new Server().url("http://localhost:8080")
                         ));
         }
 }
