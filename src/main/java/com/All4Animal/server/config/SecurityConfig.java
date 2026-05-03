@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -48,9 +50,17 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/",
+                                "/api/animals",
+                                "/api/animals/",
+                                "/api/animals",
+                                "/api/animals",
                                 "/index.html",
                                 "/favicon.ico"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/animals/sync").authenticated()
+                        // 나머지 동물 GET API는 인증 없이 허용
+                        .requestMatchers(HttpMethod.GET, "/api/animals/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
