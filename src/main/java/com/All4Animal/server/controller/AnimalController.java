@@ -3,6 +3,7 @@ package com.All4Animal.server.controller;
 import com.All4Animal.server.dto.request.AnimalSearchRequest;
 import com.All4Animal.server.dto.response.AnimalFilterResponse;
 import com.All4Animal.server.dto.response.AnimalResponse;
+import com.All4Animal.server.dto.response.AnimalSearchResponse;
 import com.All4Animal.server.dto.response.ErrorResponse;
 import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.entity.AnimalImage;
@@ -224,8 +225,8 @@ public class AnimalController {
                     )
             )
     })
-    public ResponseEntity<List<AnimalFilterResponse>> searchAniamls(@ModelAttribute AnimalSearchRequest request) {
-        List<AnimalFilterResponse> animals = animalService.searchAnimals(request);
+    public ResponseEntity<List<AnimalSearchResponse>> searchAniamls(@ModelAttribute AnimalSearchRequest request) {
+        List<AnimalSearchResponse> animals = animalService.searchAnimals(request);
 
         return ResponseEntity.ok(animals);
     }

@@ -1,37 +1,17 @@
 package com.All4Animal.server.dto.response;
 
-
-import com.All4Animal.server.entity.Animal;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 public class AnimalFilterResponse {
+    @Schema(description = "추천된 동물 수", example = "3")
+    private Integer count;
 
-    private Long animalId;
-
-    private Animal.AnimalType animalType;
-
-    private String species;
-
-    private String description;
-
-    private String happenPlace;
-
-    private String careNm;
-
-    private String careAddr;
-
-    public static AnimalFilterResponse from(Animal animal) {
-        return new AnimalFilterResponse(
-                animal.getAnimalId(),
-                animal.getAnimalType(),
-                animal.getSpecies(),
-                animal.getDescription(),
-                animal.getHappenPlace(),
-                animal.getCareNm(),
-                animal.getCareAddr()
-        );
-    }
+    @Schema(description = "추천된 동물 목록")
+    private List<RecommendedAnimalResponse> animals;
 }

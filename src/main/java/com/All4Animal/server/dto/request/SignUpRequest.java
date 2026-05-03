@@ -1,5 +1,6 @@
 package com.All4Animal.server.dto.request;
 
+import com.All4Animal.server.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -51,4 +52,14 @@ public class SignUpRequest {
     @NotNull(message = "경험 여부는 필수입니다.")
     @Schema(description = "반려동물 양육 경험 여부", example = "true")
     private Boolean isExperience;
+
+    @NotNull(message = "주거 형태는 필수입니다.")
+    @Schema(description = "주거 형태", example = "APARTMENT_VILLA")
+    private Users.Housing housingType;
+
+    @NotNull(message = "평균 외출 시간은 필수입니다.")
+    @Min(value = 0, message = "평균 외출 시간은 0시간 이상이어야 합니다.")
+    @Max(value = 24, message = "평균 외출 시간은 24시간 이하여야 합니다.")
+    @Schema(description = "하루 평균 집을 비우는 시간(시간 단위)", example = "6")
+    private Integer emptyTime;
 }

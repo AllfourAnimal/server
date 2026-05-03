@@ -25,6 +25,103 @@ public class UserPreferenceController {
     private final UserPreferenceService userPreferenceService;
     private final AuthService authService;
 
+    @Operation(summary = "선호 정보 조회", description = "로그인한 사용자의 현재 선호 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "선호 정보 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AnimalPreferenceResponse.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "dog_preference",
+                                            summary = "강아지 선호 예시",
+                                            value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "MEDIUM",
+                      "gender": "FEMALE",
+                      "age": "ADULT",
+                      "personalities": "활발함, 사람 좋아함",
+                      "updatedAt": "2026-05-01T10:30:00"
+                    }
+                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "cat_preference",
+                                            summary = "고양이 선호 예시",
+                                            value = """
+                    {
+                      "animalType": "CAT",
+                      "size": "SMALL",
+                      "gender": "MALE",
+                      "age": "YOUNG",
+                      "personalities": "호기심 많음",
+                      "updatedAt": "2026-05-01T10:35:00"
+                    }
+                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "any_preference",
+                                            summary = "상관없음 예시",
+                                            value = """
+                    {
+                      "animalType": "ANY",
+                      "size": "ANY",
+                      "gender": "ANY",
+                      "age": "ANY",
+                      "personalities": "온순함",
+                      "updatedAt": "2026-05-01T10:40:00"
+                    }
+                    """
+                                    )
+                            }
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "선호 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "preference_not_found",
+                                    value = """
+                    {
+                      "code": "BAD_REQUEST",
+                      "message": "선호 데이터가 없습니다."
+                    }
+                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "unauthorized",
+                                    value = """
+                    {
+                      "code": "UNAUTHORIZED",
+                      "message": "인증 정보가 유효하지 않습니다."
+                    }
+                    """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/preferences")
+    public ResponseEntity<AnimalPreferenceResponse> getUserPreferences(){
+        Long userId = authService.getCurrentUserId();
+        AnimalPreferenceResponse response = userPreferenceService.getUserPreferences(userId);
+        return ResponseEntity.ok(response);
+    }
+
+
     @Operation(summary = "선호 정보 수정", description = "선호 정보가 있으면 요청에 포함된 필드만 수정하고, 없으면 전체 필드 요청 시 생성합니다.")
     @ApiResponses({
             @ApiResponse(
@@ -42,7 +139,6 @@ public class UserPreferenceController {
                       "gender": "FEMALE",
                       "age": "ADULT",
                       "personalities": "활발함, 사람을 좋아함",
-                      "completed": true,
                       "updatedAt": "2026-04-10T10:30:00"
                     }
                     """
@@ -95,6 +191,197 @@ public class UserPreferenceController {
                     )
             )
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AnimalPreferenceRequest.class),
+                    examples = {
+                            @ExampleObject(
+                                    name = "animal_type_dog",
+                                    summary = "선호 동물 종류: 강아지",
+                                    value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "MEDIUM",
+                      "gender": "FEMALE",
+                      "age": "ADULT",
+                      "personalities": "활발함, 사람 좋아함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "animal_type_cat",
+                                    summary = "선호 동물 종류: 고양이",
+                                    value = """
+                    {
+                      "animalType": "CAT",
+                      "size": "SMALL",
+                      "gender": "MALE",
+                      "age": "YOUNG",
+                      "personalities": "호기심 많음"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "animal_type_any",
+                                    summary = "선호 동물 종류: 상관없음",
+                                    value = """
+                    {
+                      "animalType": "ANY",
+                      "size": "MEDIUM",
+                      "gender": "ANY",
+                      "age": "ADULT",
+                      "personalities": "온순함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "size_small",
+                                    summary = "선호 크기: 소형",
+                                    value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "SMALL",
+                      "gender": "FEMALE",
+                      "age": "ADULT",
+                      "personalities": "사람 좋아함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "size_medium",
+                                    summary = "선호 크기: 중형",
+                                    value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "MEDIUM",
+                      "gender": "MALE",
+                      "age": "ADULT",
+                      "personalities": "활발함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "size_large",
+                                    summary = "선호 크기: 대형",
+                                    value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "LARGE",
+                      "gender": "MALE",
+                      "age": "SENIOR",
+                      "personalities": "온순함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "size_any",
+                                    summary = "선호 크기: 상관없음",
+                                    value = """
+                    {
+                      "animalType": "CAT",
+                      "size": "ANY",
+                      "gender": "FEMALE",
+                      "age": "YOUNG",
+                      "personalities": "호기심 많음"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "gender_male",
+                                    summary = "선호 성별: 수컷",
+                                    value = """
+                    {
+                      "animalType": "CAT",
+                      "size": "SMALL",
+                      "gender": "MALE",
+                      "age": "ADULT",
+                      "personalities": "사람 좋아함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "gender_female",
+                                    summary = "선호 성별: 암컷",
+                                    value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "MEDIUM",
+                      "gender": "FEMALE",
+                      "age": "YOUNG",
+                      "personalities": "활발함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "gender_any",
+                                    summary = "선호 성별: 상관없음",
+                                    value = """
+                    {
+                      "animalType": "ANY",
+                      "size": "MEDIUM",
+                      "gender": "ANY",
+                      "age": "SENIOR",
+                      "personalities": "온순함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "age_young",
+                                    summary = "선호 연령대: 어린 개체",
+                                    value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "SMALL",
+                      "gender": "FEMALE",
+                      "age": "YOUNG",
+                      "personalities": "호기심 많음"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "age_adult",
+                                    summary = "선호 연령대: 성체",
+                                    value = """
+                    {
+                      "animalType": "CAT",
+                      "size": "MEDIUM",
+                      "gender": "MALE",
+                      "age": "ADULT",
+                      "personalities": "사람 좋아함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "age_senior",
+                                    summary = "선호 연령대: 노령 개체",
+                                    value = """
+                    {
+                      "animalType": "DOG",
+                      "size": "LARGE",
+                      "gender": "ANY",
+                      "age": "SENIOR",
+                      "personalities": "온순함"
+                    }
+                    """
+                            ),
+                            @ExampleObject(
+                                    name = "age_any",
+                                    summary = "선호 연령대: 상관없음",
+                                    value = """
+                    {
+                      "animalType": "CAT",
+                      "size": "ANY",
+                      "gender": "ANY",
+                      "age": "ANY",
+                      "personalities": "활발함"
+                    }
+                    """
+                            )
+                    }
+            )
+    )
     @PatchMapping("/preferences")
     public ResponseEntity<AnimalPreferenceResponse> patchUserPreferences(
             @RequestBody AnimalPreferenceRequest request

@@ -4,6 +4,7 @@ import com.All4Animal.server.client.AnimalApiClient;
 import com.All4Animal.server.dto.request.AnimalSearchRequest;
 import com.All4Animal.server.dto.response.AnimalFilterResponse;
 import com.All4Animal.server.dto.response.AnimalResponse;
+import com.All4Animal.server.dto.response.AnimalSearchResponse;
 import com.All4Animal.server.dto.response.api.AnimalApiResponse;
 import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.entity.AnimalImage;
@@ -34,13 +35,13 @@ public class AnimalService {
     }
     public List<AnimalImage> getImageByAnimalId(Long animalId) { return animalImageRepository.findByAnimal_AnimalId(animalId); }
 
-    public List<AnimalFilterResponse> searchAnimals(AnimalSearchRequest request) {
+    public List<AnimalSearchResponse> searchAnimals(AnimalSearchRequest request) {
         return animalRepository.searchAnimals(
                         request.getKeyword(),
                         request.getCareAddr(),
                         request.getAnimalType()
                 ).stream()
-                .map(AnimalFilterResponse::from)
+                .map(AnimalSearchResponse::from)
                 .toList();
     }
 
