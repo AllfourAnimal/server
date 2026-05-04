@@ -10,4 +10,6 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     boolean existsByAnimal_AnimalId(Long animalId);
 
     Optional<Story> findByAnimal(Animal animal);
+
+    Story findByAnimal_AnimalId(Long animalId);
 }

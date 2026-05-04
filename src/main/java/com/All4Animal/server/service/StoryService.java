@@ -85,4 +85,10 @@ public class StoryService {
             }
         }
     }
+
+    public Story getAnimalStory(Long animalId) {
+        Story story = storyRepository.findByAnimal_AnimalId(animalId);
+
+        return story;
+    }
 }
