@@ -17,12 +17,14 @@ public class FavoriteResponse {
 
     private String speices;
 
+    private Long animal_id;
+
 //    private List<AnimalImage> images;
     private String thumbnailImageUrl;
 
-    private Long animalAge;
+    private Long animal_age;
 
-    private Gender animlSex;
+    private Gender animl_sex;
 
     private String animalStory;
 }

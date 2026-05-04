@@ -1,8 +1,10 @@
 package com.All4Animal.server.dto.response.api;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
+@Getter
 public class AnimalApiResponse {
 
     private String desertionNo;

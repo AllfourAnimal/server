@@ -88,17 +88,17 @@ public class FavoriteController {
                                     value = """
                                             [
                                               {
-                                                "speices": "강아지",
+                                                "speices": "푸들",
                                                 "thumbnailImageUrl": "http://example.image.url/test1.jpg",
-                                                "animalAge": 2023,
-                                                "animlSex": "FEMALE",
+                                                "animal_age": 2023,
+                                                "animal_sex": "FEMALE",
                                                 "animalStory": "동물 세부사항 예시"
                                               },
                                               {
-                                                "speices": "고양이",
+                                                "speices": "한국 고양이",
                                                 "thumbnailImageUrl": "http://example.image.url/test2.jpg",
-                                                "animalAge": 2026,
-                                                "animlSex": "MALE",
+                                                "animal_age": 2026,
+                                                "animal_sex": "MALE",
                                                 "animalStory": "동물 세부사항 예시"
                                               }
                                             ]

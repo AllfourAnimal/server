@@ -82,6 +82,7 @@ public class FavoriteService {
 
                     return new FavoriteResponse(
                             animal.getSpecies(),
+                            animal.getAnimalId(),
                             thumbnailImageUrl,
                             animal.getAnimal_age().longValue(),
                             FavoriteResponse.Gender.valueOf(animal.getAnimal_sex().name()),
