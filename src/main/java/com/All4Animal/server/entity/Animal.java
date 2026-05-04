@@ -54,6 +54,8 @@ public class Animal {
 
     private boolean isVaccinated;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private boolean isAdopted;
