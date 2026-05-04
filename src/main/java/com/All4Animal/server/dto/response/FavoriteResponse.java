@@ -17,6 +17,8 @@ public class FavoriteResponse {
 
     private String speices;
 
+    private Long animal_id;
+
 //    private List<AnimalImage> images;
     private String thumbnailImageUrl;
 
