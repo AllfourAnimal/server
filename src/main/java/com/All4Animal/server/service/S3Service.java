@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -55,11 +56,20 @@ public class S3Service {
 
     @Transactional
     public S3PresignedUrlResponse uploadFile(Long userId, MultipartFile file) {
+        return uploadFile(userId, file, "profile");
+    }
+
+    @Transactional
+    public S3PresignedUrlResponse uploadReviewImage(Long userId, MultipartFile file) {
+        return uploadFile(userId, file, "review");
+    }
+
+    private S3PresignedUrlResponse uploadFile(Long userId, MultipartFile file, String directory) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
         }
 
-        String key = createProfileKey(userId, file.getOriginalFilename());
+        String key = createFileKey(directory, userId, file.getOriginalFilename());
         String contentType = StringUtils.hasText(file.getContentType())
                 ? file.getContentType()
                 : "application/octet-stream";
@@ -105,10 +115,24 @@ public class S3Service {
                 .build();
     }
 
-    private String createProfileKey(Long userId, String originalFilename) {
+    @Transactional
+    public void deleteFile(String key) {
+        if (!StringUtils.hasText(key)) {
+            return;
+        }
+
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+
+        s3Client.deleteObject(deleteObjectRequest);
+    }
+
+    private String createFileKey(String directory, Long userId, String originalFilename) {
         String filename = StringUtils.hasText(originalFilename) ? originalFilename : "file";
         String sanitizedFilename = filename.replaceAll("[\\\\/]", "_");
 
-        return "profile/" + userId + "/" + UUID.randomUUID() + "/" + sanitizedFilename;
+        return directory + "/" + userId + "/" + UUID.randomUUID() + "/" + sanitizedFilename;
     }
 }
