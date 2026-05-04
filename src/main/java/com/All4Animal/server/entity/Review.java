@@ -28,6 +28,8 @@ public class Review {
 
     private LocalDateTime createdAt;
 
+    private String imageKey;
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;

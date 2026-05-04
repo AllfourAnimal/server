@@ -45,7 +45,8 @@ dependencies {
 
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
-
+	implementation platform("software.amazon.awssdk:bom:2.31.77")
+	implementation "software.amazon.awssdk:s3"
 
 
 }
