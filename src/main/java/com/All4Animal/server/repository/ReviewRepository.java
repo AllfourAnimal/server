@@ -55,15 +55,20 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             SELECT new com.All4Animal.server.dto.response.ReviewDetailDto(
                 r.reviewId,
                 r.title,
+                r.petName,
                 r.content,
+                u.userId,
+                u.username,
                 a.desertionNo,
                 a.happenPlace,
                 a.species,
+                a.isAdopted,
                 ad.updatedAt,
                 r.createdAt,
                 r.imageKey
             )
             FROM Review r
+            JOIN r.user u
             JOIN r.animal a
             LEFT JOIN Adoption ad
                 ON ad.user = r.user

@@ -51,14 +51,17 @@ public class ReviewService {
                 ).stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
-
         return new ReviewDetailResponse(
                 review.getReviewId(),
                 review.getTitle(),
+                review.getPetName(),
                 review.getContent(),
+                review.getUserId(),
+                review.getUsername(),
                 review.getDesertionNo(),
                 review.getHappenPlace(),
                 review.getSpecies(),
+                review.isAdopted(),
                 review.getAdoptedAt(),
                 review.getCreatedAt(),
                 review.getImageKey(),
@@ -122,9 +125,13 @@ public class ReviewService {
         );
     }
 
-    public DeleteReviewResponse DeleteReview(Long reviewId){
+    public DeleteReviewResponse DeleteReview(Long userId, Long reviewId){
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제할 수 있습니다.");
+        }
 
         DeleteReviewResponse response = new DeleteReviewResponse(
                 review.getReviewId(),
