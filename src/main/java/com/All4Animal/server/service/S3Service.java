@@ -69,6 +69,24 @@ public class S3Service {
         return uploadFile(userId, file, "adoptation");
     }
 
+    public String uploadAiAnimalImage(Long animalId, byte[] imageBytes) {
+        String key = "animal-ai/" + animalId + "/" + UUID.randomUUID() + ".jpg";
+
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType("image/jpeg")
+                .contentLength((long) imageBytes.length)
+                .build();
+
+        s3Client.putObject(
+                putObjectRequest,
+                RequestBody.fromBytes(imageBytes)
+        );
+
+        return key;
+    }
+
     private S3PresignedUrlResponse uploadFile(Long userId, MultipartFile file, String directory) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
