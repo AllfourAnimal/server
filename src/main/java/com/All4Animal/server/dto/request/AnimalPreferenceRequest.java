@@ -22,7 +22,7 @@ public class AnimalPreferenceRequest {
     @Schema(description = "선호 연령대", example = "ADULT")
     private UserPreference.PreferredAgeGroup age;
 
-    @Schema(description = "선호 성격", example = "활발함, 사람을 좋아함")
+    @Schema(description = "선호 성격", example = "people_friendly,active_playful,calm_quiet")
     private String personalities;
 
 }

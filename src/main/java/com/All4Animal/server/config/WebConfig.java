@@ -13,7 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:3000",
                         "http://localhost:8080",
                         "https://all4animal.site",
-                        "https://www.all4animal.site"
+                        "https://www.all4animal.site",
+                        "https://client-peach-zeta.vercel.app"
                 )// 허용할 출처 (URL)
                 .allowedMethods("GET", "POST", "PUT","PATCH", "DELETE") // HTTP 메서드 허용
                 .allowedHeaders("*")                                    // 모든 헤더 허용

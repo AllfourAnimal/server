@@ -56,7 +56,6 @@ public class AdoptationService {
 
         adoptation.setStatus(Adoptation.AdoptionStatus.INQUIRY);
         adoptation.setUpdatedAt(LocalDateTime.now());
-
         return AdoptationResponse.from(adoptationRepository.save(adoptation));
     }
 
