@@ -5,9 +5,7 @@ import com.All4Animal.server.entity.Story;
 import com.All4Animal.server.repository.AnimalRepository;
 import com.All4Animal.server.repository.StoryRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
