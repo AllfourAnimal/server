@@ -1,13 +1,11 @@
 package com.All4Animal.server.controller;
 
 import com.All4Animal.server.dto.request.AnimalSearchRequest;
-import com.All4Animal.server.dto.response.AnimalFilterResponse;
-import com.All4Animal.server.dto.response.AnimalResponse;
-import com.All4Animal.server.dto.response.AnimalSearchResponse;
-import com.All4Animal.server.dto.response.ErrorResponse;
-import com.All4Animal.server.entity.Animal;
+import com.All4Animal.server.dto.response.*;
 import com.All4Animal.server.entity.AnimalImage;
+import com.All4Animal.server.repository.AnimalImageRepository;
 import com.All4Animal.server.service.AnimalService;
+import com.All4Animal.server.service.ImageEditService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -17,7 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import com.All4Animal.server.service.S3Service;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,8 @@ import java.util.Map;
 public class AnimalController {
 
     private final AnimalService animalService;
+    private final ImageEditService imageEditService;
+    private final S3Service s3Service;
 
     @Operation(summary = "공공데이터 동기화", description = "동물 API를 DB에 저장")
     @ApiResponses({
@@ -174,15 +176,29 @@ public class AnimalController {
                     )
             )
     })
-    public ResponseEntity<List<String>> getAnimalImages(@PathVariable Long animalId) {
+    public ResponseEntity<List<AnimalImageResponse>> getAnimalImages(@PathVariable Long animalId) {
         List<AnimalImage> images = animalService.getImageByAnimalId(animalId);
 
-        List<String> imageUrls = images.stream()
-                .map(AnimalImage::getImageUrl)
+        List<AnimalImageResponse> imageResponses = images.stream()
+                .map(image -> {
+                    String imageUrl = image.getImageUrl();
+
+                    if (StringUtils.hasText(imageUrl)
+                            && !imageUrl.startsWith("http://")
+                            && !imageUrl.startsWith("https://")) {
+                        imageUrl = s3Service.getGetS3Url(animalId, imageUrl).getPreSignedUrl();
+                    }
+
+                    return new AnimalImageResponse(
+                            imageUrl,
+                            image.isAiImage()
+                    );
+                })
                 .toList();
 
-        return ResponseEntity.ok(imageUrls);
+        return ResponseEntity.ok(imageResponses);
     }
+
 
     @GetMapping("/search")
     @Operation(summary = "동물 검색 필터링", description = "사용자가 입력한 키워드, 동물의 종, 보호 지역을 기준으로 동물을 필터링합니다.")
@@ -233,5 +249,12 @@ public class AnimalController {
         List<AnimalSearchResponse> animals = animalService.searchAnimals(request);
 
         return ResponseEntity.ok(animals);
+    }
+
+    @PostMapping("/create/all/images")
+    @Operation(summary = "동물 Ai 이미지 생성", description = "모든 동물의 Ai 이미지를 생성합니다")
+    public ResponseEntity<String> createAllAiImages() {
+        imageEditService.createAllAiImage();
+        return ResponseEntity.ok("모든 동물의 Ai 이미지 생성 시작 및 완료");
     }
 }

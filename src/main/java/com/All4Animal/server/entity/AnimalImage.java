@@ -29,6 +29,8 @@ public class AnimalImage {
     @JsonIgnore
     private Animal animal;
 
+    private boolean isAiImage;
+
     private String imageUrl;
 
     @CreatedDate

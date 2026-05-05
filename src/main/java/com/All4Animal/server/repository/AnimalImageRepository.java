@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AnimalImageRepository extends JpaRepository<AnimalImage, Long> {
     List<AnimalImage> findByAnimal_AnimalId(Long animalId);
-
+    AnimalImage findFirstByAnimal_AnimalIdAndIsAiImageFalseOrderByImageIdAsc(Long animalId);
 }
