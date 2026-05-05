@@ -46,6 +46,42 @@ public class AuthService {
                 .birthYear(request.getBirthYear())
                 .location(request.getLocation())
                 .isExperience(request.getIsExperience())
+                .role(Users.Role.USER)
+                .housingType(request.getHousingType())
+                .emptyTime(request.getEmptyTime())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Users savedUser = userRepository.save(user);
+
+        return new SignUpResponse(
+                savedUser.getUserId(),
+                savedUser.getLoginId()
+        );
+    }
+
+    public SignUpResponse signupMaster(SignUpRequest request) {
+        if (userRepository.existsByRole(Users.Role.MASTER)) {
+            throw new IllegalArgumentException("마스터 계정은 이미 존재합니다.");
+        }
+
+        if (userRepository.existsByLoginId(request.getLoginId())) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+
+        if (!request.getPassword().equals(request.getPasswordConfirm())) {
+            throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
+
+        Users user = Users.builder()
+                .loginId(request.getLoginId())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .username(request.getName())
+                .phone(request.getPhone())
+                .birthYear(request.getBirthYear())
+                .location(request.getLocation())
+                .isExperience(request.getIsExperience())
+                .role(Users.Role.MASTER)
                 .housingType(request.getHousingType())
                 .emptyTime(request.getEmptyTime())
                 .createdAt(LocalDateTime.now())
@@ -68,13 +104,15 @@ public class AuthService {
         }
 
 
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), user.getLoginId());
+        Users.Role role = user.getRole() == null ? Users.Role.USER : user.getRole();
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), user.getLoginId(), role);
 
         return new LoginResponse(
                 accessToken,
                 user.getUserId(),
                 user.getLoginId(),
-                user.getUsername()
+                user.getUsername(),
+                role
         );
     }
 
@@ -105,6 +143,22 @@ public class AuthService {
 
         return userRepository.findByLoginId(loginId)
                 .map(Users::getUserId)
+                .orElseThrow(() -> new AuthenticationFailedException("사용자 정보를 찾을 수 없습니다."));
+    }
+
+    public Users getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationFailedException("인증된 사용자 정보를 찾을 수 없습니다.");
+        }
+
+        String loginId = authentication.getName();
+        if (loginId == null || loginId.isBlank() || "anonymousUser".equals(loginId)) {
+            throw new AuthenticationFailedException("인증된 사용자 정보를 찾을 수 없습니다.");
+        }
+
+        return userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new AuthenticationFailedException("사용자 정보를 찾을 수 없습니다."));
     }
 }

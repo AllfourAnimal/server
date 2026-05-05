@@ -64,6 +64,11 @@ public class S3Service {
         return uploadFile(userId, file, "review");
     }
 
+    @Transactional
+    public S3PresignedUrlResponse uploadAdoptationProofImage(Long userId, MultipartFile file) {
+        return uploadFile(userId, file, "adoptation");
+    }
+
     private S3PresignedUrlResponse uploadFile(Long userId, MultipartFile file, String directory) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");

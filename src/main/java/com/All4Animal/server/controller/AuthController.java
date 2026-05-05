@@ -192,6 +192,13 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "마스터 회원가입", description = "최초 1회만 마스터 계정을 생성합니다. 이미 마스터 계정이 있으면 실패합니다.")
+    @PostMapping("/master/signup")
+    public ResponseEntity<?> signupMaster(@Valid @RequestBody SignUpRequest request) {
+        SignUpResponse response = authService.signupMaster(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @Operation(summary = "로그인", description = "로그인 성공 시 JWT Access Token을 발급합니다.")
     @ApiResponses({
             @ApiResponse(
@@ -207,7 +214,8 @@ public class AuthController {
                       "accessToken": "eyJhbGciOiJIUzI1NiJ9.example.jwt.token",
                       "userId": 1,
                       "loginId": "all4animal",
-                      "username": "홍길동"
+                      "username": "홍길동",
+                      "role": "USER"
                     }
                     """
                             )

@@ -1,5 +1,6 @@
 package com.All4Animal.server.security;
 
+import com.All4Animal.server.entity.Users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -24,13 +25,14 @@ public class JwtTokenProvider {
         this.accessTokenExpiration = accessTokenExpiration;
     }
 
-    public String generateAccessToken(Long userId, String loginId) {
+    public String generateAccessToken(Long userId, String loginId, Users.Role role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + accessTokenExpiration);
 
         return Jwts.builder()
                 .subject(loginId)
                 .claim("userId", userId)
+                .claim("role", role.name())
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(secretKey)
@@ -43,6 +45,18 @@ public class JwtTokenProvider {
 
     public Long extractUserId(String token) {
         return extractClaims(resolveToken(token)).get("userId", Long.class);
+    }
+
+    public Users.Role extractRole(String token) {
+        String role = extractClaims(resolveToken(token)).get("role", String.class);
+        if (role == null || role.isBlank()) {
+            return Users.Role.USER;
+        }
+        try {
+            return Users.Role.valueOf(role);
+        } catch (IllegalArgumentException exception) {
+            return Users.Role.USER;
+        }
     }
 
     public boolean validateToken(String token) {

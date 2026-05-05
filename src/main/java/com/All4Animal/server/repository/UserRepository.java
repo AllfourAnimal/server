@@ -9,6 +9,8 @@ public interface UserRepository extends JpaRepository<Users, Long> {
 
     boolean existsByLoginId(String loginId);
 
+    boolean existsByRole(Users.Role role);
+
     Optional<Users> findByLoginId(String loginId);
 
     // 나중에 유저랑 유저 preference를 같이 가져올거면 fetch join

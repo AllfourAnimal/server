@@ -61,6 +61,7 @@ public class SecurityConfig {
                         // 나머지 동물 GET API는 인증 없이 허용
                         .requestMatchers(HttpMethod.GET, "/api/animals/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/adoptations/*/approve").hasRole("MASTER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
