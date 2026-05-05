@@ -32,28 +32,22 @@ public class ReviewService {
 
 
     public ReviewListResponse getAllReviews(){
-        List<ReviewItemResponse> responses = new ArrayList<>();
-            List<Review> reviews = reviewRepository.findAllWithUser();
-            for(Review review : reviews){
-                Users user = review.getUser();
-                ReviewItemResponse response =
-                        new ReviewItemResponse(
-                                review.getReviewId(),
-                                review.getTitle(),
-                                review.getContent(),
-                                review.getCreatedAt(),
-                                user.getUserId(),
-                                user.getUsername(),
-                                review.getImageKey(),
-                                createImageUrl(review.getImageKey())
-                        );
-                responses.add(response);
-            }
-            return new ReviewListResponse(reviews.size(), responses);
+        return toReviewListResponse(reviewRepository.findAllWithUser());
+    }
+
+    public ReviewListResponse getReviewsByAnimalType(Animal.AnimalType animalType) {
+        return toReviewListResponse(reviewRepository.findAllByAnimalTypeWithUserAndAnimal(animalType));
+    }
+
+    public ReviewListResponse getAdoptedAnimalReviews() {
+        return toReviewListResponse(reviewRepository.findAllByAdoptedAnimalWithUserAndAnimal());
     }
 
     public ReviewDetailResponse getReview(Long reviewId){
-        ReviewDetailDto review = reviewRepository.findReviewDetailDtoById(reviewId).stream()
+        ReviewDetailDto review = reviewRepository.findReviewDetailDtoById(
+                        reviewId,
+                        Adoptation.AdoptionStatus.COMPLETED
+                ).stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
@@ -63,6 +57,8 @@ public class ReviewService {
                 review.getContent(),
                 review.getDesertionNo(),
                 review.getHappenPlace(),
+                review.getSpecies(),
+                review.getAdoptedAt(),
                 review.getCreatedAt(),
                 review.getImageKey(),
                 createImageUrl(review.getImageKey())
@@ -80,15 +76,6 @@ public class ReviewService {
         Animal animal = animalRepository.findById(request.getAnimalId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 동물이 존재하지 않습니다."));
 
-        boolean completedAdoptation = adoptationRepository.existsByUserAndAnimalAndStatus(
-                user,
-                animal,
-                Adoptation.AdoptionStatus.COMPLETED
-        );
-        if (!completedAdoptation) {
-            throw new IllegalArgumentException("입양 완료된 동물에 대해서만 리뷰를 작성할 수 있습니다.");
-        }
-
         S3PresignedUrlResponse imageUploadResponse = null;
         if (image != null && !image.isEmpty()) {
             imageUploadResponse = s3Service.uploadReviewImage(userId, image);
@@ -96,6 +83,8 @@ public class ReviewService {
 
         Review review = Review.builder()
                 .title(request.getTitle())
+                .petName(request.getPetName())
+                .desertionNo(request.getDesertionNo())
                 .content(request.getContent())
                 .createdAt(LocalDateTime.now())
                 .imageKey(imageUploadResponse != null ? imageUploadResponse.getKey() : null)
@@ -107,6 +96,8 @@ public class ReviewService {
         return new ReviewResponse(
                 review.getReviewId(),
                 review.getTitle(),
+                review.getPetName(),
+                review.getDesertionNo(),
                 review.getContent(),
                 review.getCreatedAt(),
                 review.getImageKey(),
@@ -151,6 +142,32 @@ public class ReviewService {
             return null;
         }
         return s3Service.getGetS3Url(0L, imageKey).getPreSignedUrl();
+    }
+
+    private ReviewListResponse toReviewListResponse(List<Review> reviews) {
+        List<ReviewItemResponse> responses = new ArrayList<>();
+
+        for (Review review : reviews) {
+            Users user = review.getUser();
+            Animal animal = review.getAnimal();
+            ReviewItemResponse response =
+                    new ReviewItemResponse(
+                            review.getReviewId(),
+                            review.getTitle(),
+                            review.getContent(),
+                            review.getCreatedAt(),
+                            user.getUserId(),
+                            user.getUsername(),
+                            animal.getAnimalId(),
+                            animal.getAnimalType(),
+                            animal.isAdopted(),
+                            review.getImageKey(),
+                            createImageUrl(review.getImageKey())
+                    );
+            responses.add(response);
+        }
+
+        return new ReviewListResponse(reviews.size(), responses);
     }
 
 }

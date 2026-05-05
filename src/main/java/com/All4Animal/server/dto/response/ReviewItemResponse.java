@@ -1,5 +1,6 @@
 package com.All4Animal.server.dto.response;
 
+import com.All4Animal.server.entity.Animal;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,15 @@ public class ReviewItemResponse {
 
     @Schema(description = "작성자 이름", example = "홍길동")
     private String username;
+
+    @Schema(description = "동물 ID", example = "12")
+    private Long animalId;
+
+    @Schema(description = "동물 타입", example = "DOG")
+    private Animal.AnimalType animalType;
+
+    @Schema(description = "입양 완료 여부", example = "true")
+    private boolean isAdopted;
 
     @Schema(description = "S3 이미지 key", example = "review/1/550e8400-e29b-41d4-a716-446655440000/cat.png")
     private String imageKey;
