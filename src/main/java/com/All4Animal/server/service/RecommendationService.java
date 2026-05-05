@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,13 +32,6 @@ public class RecommendationService {
     private final UserRepository userRepository;
 
     private static final int BASE_SCORE = 50;
-    private static final Map<String, List<String>> PERSONALITY_KEYWORDS = Map.of(
-            "온순함", List.of("온순", "얌전", "순한"),
-            "활발함", List.of("활발"),
-            "사람 좋아함", List.of("사람 좋아", "사람좋아", "사람을 좋아", "애교", "친화"),
-            "털 관리 잘됨", List.of("털빠짐 적음", "털 빠짐 적음", "짧은 털", "짧은털"),
-            "호기심 많음", List.of("호기심")
-    );
 
     @Transactional(readOnly = true)
     public AnimalFilterResponse recommendTop3AnimalsByPreference(Long userId){
@@ -140,7 +131,8 @@ public class RecommendationService {
 
     private int calculateScore(Users user, UserPreference preference, Animal animal) {
         int score = BASE_SCORE;
-        boolean activeAnimal = hasKeyword(animal, "활발");
+
+        boolean activeAnimal = isActiveAnimal(animal);
         boolean largeAnimal = classifySize(animal.getWeight()) == UserPreference.PreferredSize.LARGE;
         int animalAge = getAnimalAge(animal);
 
@@ -150,6 +142,12 @@ public class RecommendationService {
 
         return score;
     }
+
+    private boolean isActiveAnimal(Animal animal) {
+        return zeroIfNull(animal.getActive_playful().getValue()) >= 0.7
+                || zeroIfNull(animal.getOutdoor_activity().getValue()) >= 0.7;
+    }
+
 
     private int calculateHousingScore(Users user, boolean activeAnimal, boolean largeAnimal) {
         if (user.getHousingType() == null) {
@@ -207,36 +205,39 @@ public class RecommendationService {
             return 0;
         }
 
-        List<String> selectedPreferences = List.of(preference.getPreferredPersonality().split(",")).stream()
+        return List.of(preference.getPreferredPersonality().split(",")).stream()
                 .map(String::trim)
                 .filter(StringUtils::hasText)
-                .toList();
-
-        int score = 0;
-        for (String selectedPreference : selectedPreferences) {
-            List<String> keywords = PERSONALITY_KEYWORDS.get(selectedPreference);
-            if (keywords == null || keywords.isEmpty()) {
-                continue;
-            }
-            if (keywords.stream().anyMatch(keyword -> hasKeyword(animal, keyword))) {
-                score += 3;
-            }
-        }
-        return score;
+                .mapToInt(code -> getAnimalPersonalityScore(animal, code))
+                .sum();
     }
 
-    private boolean hasKeyword(Animal animal, String keyword) {
-        String searchableText = buildSearchableText(animal);
-        if (!StringUtils.hasText(searchableText)) {
-            return false;
+    private int scalePersonalityScore(Double score) {
+        if (score == null) {
+            return 0;
         }
-        return searchableText.contains(keyword.toLowerCase(Locale.ROOT));
+        return (int) Math.round(score * 10);
     }
 
-    private String buildSearchableText(Animal animal) {
-        return ((animal.getPersona() == null ? "" : animal.getPersona()) + " "
-                + (animal.getDescription() == null ? "" : animal.getDescription()))
-                .toLowerCase(Locale.ROOT);
+
+    private int getAnimalPersonalityScore(Animal animal, String code) {
+        return switch (code) {
+            case "people_friendly" -> scalePersonalityScore(animal.getPeople_friendly().getValue());
+            case "active_playful" -> scalePersonalityScore(animal.getActive_playful().getValue());
+            case "calm_quiet" -> scalePersonalityScore(animal.getCalm_quiet().getValue());
+            case "adaptable" -> scalePersonalityScore(animal.getAdaptable().getValue());
+            case "outdoor_activity" -> scalePersonalityScore(animal.getOutdoor_activity().getValue());
+            case "animal_friendly" -> scalePersonalityScore(animal.getAnimal_friendly().getValue());
+            case "beginner_possible" -> scalePersonalityScore(animal.getBeginner_possible().getValue());
+            case "family_friendly" -> scalePersonalityScore(animal.getFamily_friendly().getValue());
+            case "slow_bonding_ok" -> scalePersonalityScore(animal.getSlow_bonding_ok().getValue());
+            default -> 0;
+        };
+    }
+
+
+    private Double zeroIfNull(Double score) {
+        return score == null ? 0.0 : score;
     }
 
     private int getAnimalAge(Animal animal) {

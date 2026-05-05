@@ -86,4 +86,5 @@ public class UserPreference {
     @Schema(description = "선호 성격 키워드")
     private String preferredPersonality;
 
+
 }
