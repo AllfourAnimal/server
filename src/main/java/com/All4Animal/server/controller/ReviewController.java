@@ -1,10 +1,7 @@
 package com.All4Animal.server.controller;
 
 import com.All4Animal.server.dto.request.ReviewRequest;
-import com.All4Animal.server.dto.response.ErrorResponse;
-import com.All4Animal.server.dto.response.ReviewDetailResponse;
-import com.All4Animal.server.dto.response.ReviewListResponse;
-import com.All4Animal.server.dto.response.ReviewResponse;
+import com.All4Animal.server.dto.response.*;
 import com.All4Animal.server.service.AuthService;
 import com.All4Animal.server.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -299,7 +296,7 @@ public class ReviewController {
     })
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<?> deleteReview(@PathVariable Long reviewId){
-        ReviewDetailResponse response = reviewService.DeleteReview(reviewId);
+        DeleteReviewResponse response = reviewService.DeleteReview(reviewId);
         return ResponseEntity.ok().body(response);
     }
 }
