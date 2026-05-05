@@ -19,6 +19,11 @@ import java.util.List;
 @Builder
 public class Users {
 
+    public enum Role {
+        USER,
+        MASTER
+    }
+
     @Schema(description = "사용자 주거 형태")
     public enum Housing{
         @Schema(description = "아파트 또는 빌라")
@@ -57,6 +62,10 @@ public class Users {
 
     @Column(nullable = false)
     private boolean isExperience;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.USER;
 
     @Schema(description = "사용자 주거 형태")
     private Housing housingType;
