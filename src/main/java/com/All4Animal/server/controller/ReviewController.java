@@ -2,6 +2,7 @@ package com.All4Animal.server.controller;
 
 import com.All4Animal.server.dto.request.ReviewRequest;
 import com.All4Animal.server.dto.response.*;
+import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.service.AuthService;
 import com.All4Animal.server.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,6 +64,85 @@ public class ReviewController {
         ReviewListResponse response = reviewService.getAllReviews();
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "동물 타입별 리뷰 조회", description = "DOG, CAT, OTHER 중 하나로 리뷰 목록을 필터링합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "동물 타입별 리뷰 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ReviewListResponse.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "강아지 리뷰",
+                                            value = """
+                                                    {
+                                                      "count": 1,
+                                                      "reviews": [
+                                                        {
+                                                          "reviewId": 1,
+                                                          "title": "입양 후기",
+                                                          "content": "활발하고 사람을 잘 따라요.",
+                                                          "createdAt": "2026-04-10T10:30:00",
+                                                          "userId": 1,
+                                                          "username": "홍길동",
+                                                          "animalId": 12,
+                                                          "animalType": "DOG",
+                                                          "isAdopted": true,
+                                                          "imageKey": "review/1/550e8400-e29b-41d4-a716-446655440000/dog.png",
+                                                          "imageUrl": "https://bucket.s3.ap-northeast-2.amazonaws.com/..."
+                                                        }
+                                                      ]
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
+    })
+    @GetMapping("/animal-type/{animalType}")
+    public ResponseEntity<ReviewListResponse> getReviewsByAnimalType(@PathVariable Animal.AnimalType animalType) {
+        return ResponseEntity.ok(reviewService.getReviewsByAnimalType(animalType));
+    }
+
+    @Operation(summary = "입양 완료 동물 리뷰 조회", description = "Animal 테이블 기준으로 입양 완료(isAdopted=true)된 동물의 리뷰만 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "입양 완료 동물 리뷰 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ReviewListResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "count": 1,
+                                              "reviews": [
+                                                {
+                                                  "reviewId": 1,
+                                                  "title": "입양 후기",
+                                                  "content": "적응도 빠르고 애교가 많아요.",
+                                                  "createdAt": "2026-05-04T10:30:00",
+                                                  "userId": 1,
+                                                  "username": "홍길동",
+                                                  "animalId": 12,
+                                                  "animalType": "CAT",
+                                                  "isAdopted": true,
+                                                  "imageKey": "review/1/550e8400-e29b-41d4-a716-446655440000/cat.png",
+                                                  "imageUrl": "https://bucket.s3.ap-northeast-2.amazonaws.com/..."
+                                                }
+                                              ]
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/adopted")
+    public ResponseEntity<ReviewListResponse> getAdoptedAnimalReviews() {
+        return ResponseEntity.ok(reviewService.getAdoptedAnimalReviews());
     }
 
     @Operation(summary = "리뷰 상세 조회", description = "리뷰 ID로 리뷰 상세 정보를 조회합니다.")
@@ -127,6 +207,8 @@ public class ReviewController {
                     {
                       "reviewId": 1,
                       "title": "입양 후기",
+                      "petName": "초코",
+                      "desertion_no": "441111202600123",
                       "content": "적응도 빠르고 애교가 많아요.",
                       "createdAt": "2026-04-10T10:30:00",
                       "imageKey": null,
@@ -204,6 +286,8 @@ public class ReviewController {
                     {
                       "reviewId": 1,
                       "title": "입양 후기",
+                      "petName": "초코",
+                      "desertion_no": "441111202600123",
                       "content": "적응도 빠르고 애교가 많아요.",
                       "createdAt": "2026-05-04T10:30:00",
                       "imageKey": "review/1/550e8400-e29b-41d4-a716-446655440000/cat.png",
@@ -235,10 +319,12 @@ public class ReviewController {
     public ResponseEntity<ReviewResponse> postReviewWithImage(
             @Parameter(description = "리뷰 제목", example = "입양 후기")
             @RequestParam String title,
+            @Parameter(description = "반려동물 이름", example = "초코")
+            @RequestParam(required = false) String petName,
+            @Parameter(description = "공고 번호. 선택 입력값입니다.", example = "441111202600123")
+            @RequestParam(name = "desertion_no", required = false) String desertionNo,
             @Parameter(description = "리뷰 내용", example = "적응도 빠르고 애교가 많아요.")
             @RequestParam String content,
-            @Parameter(description = "리뷰 대상 동물 ID", example = "12")
-            @RequestParam Long animalId,
             @Parameter(description = "리뷰 사진 파일")
             @RequestPart(value = "image", required = false) MultipartFile image
     ){
@@ -246,8 +332,9 @@ public class ReviewController {
 
         ReviewRequest request = new ReviewRequest();
         request.setTitle(title);
+        request.setPetName(petName);
+        request.setDesertionNo(desertionNo);
         request.setContent(content);
-        request.setAnimalId(animalId);
 
         ReviewResponse response = reviewService.postReview(userId, request, image);
         return ResponseEntity.ok(response);

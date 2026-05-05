@@ -14,6 +14,8 @@ public class ReviewDetailDto {
     private String content;
     private String desertionNo;
     private String happenPlace;
+    private String species;
+    private LocalDateTime adoptedAt;
     private LocalDateTime createdAt;
     private String imageKey;
 }

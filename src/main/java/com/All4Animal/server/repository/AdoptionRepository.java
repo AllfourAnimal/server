@@ -1,7 +1,7 @@
 package com.All4Animal.server.repository;
 
 
-import com.All4Animal.server.entity.Adoptation;
+import com.All4Animal.server.entity.Adoption;
 import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,38 +11,40 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface AdoptationRepository extends JpaRepository<Adoptation, Long> {
+public interface AdoptionRepository extends JpaRepository<Adoption, Long> {
 
-    Optional<Adoptation> findByUserAndAnimal(Users user, Animal animal);
+    Optional<Adoption> findByUserAndAnimal(Users user, Animal animal);
 
-    boolean existsByUserAndAnimalAndStatus(Users user, Animal animal, Adoptation.AdoptionStatus status);
+    boolean existsByUserAndAnimalAndStatus(Users user, Animal animal, Adoption.AdoptionStatus status);
+
+    boolean existsByUserAndAnimalAndStatusIn(Users user, Animal animal, List<Adoption.AdoptionStatus> statuses);
 
     @Query("""
             SELECT ad
-            FROM Adoptation ad
+            FROM Adoption ad
             JOIN FETCH ad.user
             JOIN FETCH ad.animal
-            WHERE ad.user = :user
+            WHERE ad.user.userId = :userId
             ORDER BY ad.updatedAt DESC
             """)
-    List<Adoptation> findAllByUserWithAnimalOrderByUpdatedAtDesc(@Param("user") Users user);
+    List<Adoption> findAllByUserIdWithAnimalOrderByUpdatedAtDesc(@Param("userId") Long userId);
 
     @Query("""
             SELECT ad
-            FROM Adoptation ad
+            FROM Adoption ad
             JOIN FETCH ad.user
             JOIN FETCH ad.animal
             WHERE ad.status = :status
             ORDER BY ad.updatedAt DESC
             """)
-    List<Adoptation> findAllByStatusWithAnimalOrderByUpdatedAtDesc(@Param("status") Adoptation.AdoptionStatus status);
+    List<Adoption> findAllByStatusWithAnimalOrderByUpdatedAtDesc(@Param("status") Adoption.AdoptionStatus status);
 
     @Query("""
             SELECT ad
-            FROM Adoptation ad
+            FROM Adoption ad
             JOIN FETCH ad.user
             JOIN FETCH ad.animal
             ORDER BY ad.updatedAt DESC
             """)
-    List<Adoptation> findAllWithAnimalOrderByUpdatedAtDesc();
+    List<Adoption> findAllWithAnimalOrderByUpdatedAtDesc();
 }

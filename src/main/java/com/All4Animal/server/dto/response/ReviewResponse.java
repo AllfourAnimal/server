@@ -1,5 +1,6 @@
 package com.All4Animal.server.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,13 @@ public class ReviewResponse {
 
     @Schema(description = "리뷰 제목", example = "입양 후기")
     private String title;
+
+    @Schema(description = "반려동물 이름", example = "초코")
+    private String petName;
+
+    @JsonProperty("desertion_no")
+    @Schema(description = "공고 번호", example = "441111202600123")
+    private String desertionNo;
 
     @Schema(description = "리뷰 내용", example = "적응도 빠르고 애교가 많아요.")
     private String content;

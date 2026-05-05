@@ -24,6 +24,10 @@ public class Review {
 
     private String title;
 
+    private String petName;
+
+    private String desertionNo;
+
     private String content;
 
     private LocalDateTime createdAt;

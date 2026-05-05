@@ -1,8 +1,8 @@
 package com.All4Animal.server.controller;
 
-import com.All4Animal.server.dto.response.AdoptationResponse;
+import com.All4Animal.server.dto.response.AdoptionResponse;
 import com.All4Animal.server.dto.response.ErrorResponse;
-import com.All4Animal.server.service.AdoptationService;
+import com.All4Animal.server.service.AdoptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -16,17 +16,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.All4Animal.server.entity.Adoptation;
+import com.All4Animal.server.entity.Adoption;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/adoptations")
+@RequestMapping("/api/adoptions")
 @RequiredArgsConstructor
-@Tag(name = "Adoptation", description = "입양 문의 API")
-public class AdoptationController {
+@Tag(name = "Adoption", description = "입양 문의 API")
+public class AdoptionController {
 
-    private final AdoptationService adoptationService;
+    private final AdoptionService adoptationService;
 
     @Operation(summary = "입양 문의", description = "로그인한 사용자와 동물을 매핑해 입양 문의 상태로 저장합니다.")
     @ApiResponses({
@@ -35,7 +35,7 @@ public class AdoptationController {
                     description = "입양 문의 저장 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AdoptationResponse.class),
+                            schema = @Schema(implementation = AdoptionResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -71,7 +71,7 @@ public class AdoptationController {
             )
     })
     @PostMapping("/{animalId}/inquiry")
-    public ResponseEntity<AdoptationResponse> createInquiry(@PathVariable Long animalId) {
+    public ResponseEntity<AdoptionResponse> createInquiry(@PathVariable Long animalId) {
         return ResponseEntity.ok(adoptationService.createInquiry(animalId));
     }
 
@@ -82,7 +82,7 @@ public class AdoptationController {
                     description = "입양 신청 상태 변경 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AdoptationResponse.class),
+                            schema = @Schema(implementation = AdoptionResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -102,7 +102,7 @@ public class AdoptationController {
             )
     })
     @PostMapping("/{animalId}/apply")
-    public ResponseEntity<AdoptationResponse> apply(@PathVariable Long animalId) {
+    public ResponseEntity<AdoptionResponse> apply(@PathVariable Long animalId) {
         return ResponseEntity.ok(adoptationService.apply(animalId));
     }
 
@@ -113,7 +113,7 @@ public class AdoptationController {
                     description = "입양 완료 사진 등록 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AdoptationResponse.class),
+                            schema = @Schema(implementation = AdoptionResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -133,7 +133,7 @@ public class AdoptationController {
             )
     })
     @PostMapping(value = "/{adoptionId}/proof-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdoptationResponse> uploadProofImage(
+    public ResponseEntity<AdoptionResponse> uploadProofImage(
             @PathVariable Long adoptionId,
             @RequestPart("image") MultipartFile image
     ) {
@@ -147,7 +147,7 @@ public class AdoptationController {
                     description = "입양 승인 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AdoptationResponse.class),
+                            schema = @Schema(implementation = AdoptionResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -167,7 +167,7 @@ public class AdoptationController {
             )
     })
     @PatchMapping("/{adoptionId}/approve")
-    public ResponseEntity<AdoptationResponse> approve(@PathVariable Long adoptionId) {
+    public ResponseEntity<AdoptionResponse> approve(@PathVariable Long adoptionId) {
         return ResponseEntity.ok(adoptationService.approve(adoptionId));
     }
 
@@ -178,7 +178,7 @@ public class AdoptationController {
                     description = "내 입양 내역 조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AdoptationResponse.class),
+                            schema = @Schema(implementation = AdoptionResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             [
@@ -211,7 +211,7 @@ public class AdoptationController {
             )
     })
     @GetMapping("/my")
-    public ResponseEntity<List<AdoptationResponse>> getMyAdoptations() {
+    public ResponseEntity<List<AdoptionResponse>> getMyAdoptations() {
         return ResponseEntity.ok(adoptationService.getMyAdoptations());
     }
 
@@ -222,7 +222,7 @@ public class AdoptationController {
                     description = "입양 내역 조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AdoptationResponse.class),
+                            schema = @Schema(implementation = AdoptionResponse.class),
                             examples = {
                                     @ExampleObject(
                                             name = "전체 조회",
@@ -265,8 +265,8 @@ public class AdoptationController {
             )
     })
     @GetMapping
-    public ResponseEntity<List<AdoptationResponse>> getAdoptations(
-            @RequestParam(required = false) Adoptation.AdoptionStatus status
+    public ResponseEntity<List<AdoptionResponse>> getAdoptations(
+            @RequestParam(required = false) Adoption.AdoptionStatus status
     ) {
         return ResponseEntity.ok(adoptationService.getAdoptations(status));
     }

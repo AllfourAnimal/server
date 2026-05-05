@@ -24,6 +24,12 @@ public class ReviewDetailResponse {
     @Schema(description = "구조 위치", example = "경기도 하남시 하남시청역 근방")
     private String happenPlace;
 
+    @Schema(description = "종에 대한 정보", example = "푸들")
+    private String species;
+
+    @Schema(description = "입양 완료 날짜. 입양 완료 내역이 없으면 null", example = "2026-05-10T12:30:00")
+    private LocalDateTime adoptedAt;
+
     @Schema(description = "작성 시각", example = "2026-04-10")
     private LocalDateTime createdAt;
 

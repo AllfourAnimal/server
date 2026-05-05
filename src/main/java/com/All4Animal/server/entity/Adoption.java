@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // 전체 생성자 자동 제작
 @Data // Getter, Setter, toString, equals과 같은 기본 메서드 자동 제작
 @Builder // 빌더 패던 적용
-public class Adoptation {
+public class Adoption {
     public enum AdoptionStatus {
         INQUIRY,      // 입양 문의
         APPLIED,      // 입양 신청
