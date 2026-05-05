@@ -325,8 +325,6 @@ public class ReviewController {
             @RequestParam(name = "desertion_no", required = false) String desertionNo,
             @Parameter(description = "리뷰 내용", example = "적응도 빠르고 애교가 많아요.")
             @RequestParam String content,
-            @Parameter(description = "리뷰 대상 동물 ID", example = "12")
-            @RequestParam Long animalId,
             @Parameter(description = "리뷰 사진 파일")
             @RequestPart(value = "image", required = false) MultipartFile image
     ){
@@ -337,7 +335,6 @@ public class ReviewController {
         request.setPetName(petName);
         request.setDesertionNo(desertionNo);
         request.setContent(content);
-        request.setAnimalId(animalId);
 
         ReviewResponse response = reviewService.postReview(userId, request, image);
         return ResponseEntity.ok(response);

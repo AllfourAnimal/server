@@ -1,9 +1,10 @@
 package com.All4Animal.server.repository;
 
 import com.All4Animal.server.dto.response.ReviewDetailDto;
-import com.All4Animal.server.entity.Adoptation;
+import com.All4Animal.server.entity.Adoption;
 import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.entity.Review;
+import com.All4Animal.server.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,16 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+
+    boolean existsByUserAndAnimal(Users user, Animal animal);
+
+    @Query("""
+            SELECT r.animal.animalId
+            FROM Review r
+            WHERE r.user = :user
+            """)
+    List<Long> findReviewedAnimalIdsByUser(@Param("user") Users user);
+
     @Query("""
             SELECT r
             FROM Review r
@@ -54,7 +65,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             )
             FROM Review r
             JOIN r.animal a
-            LEFT JOIN Adoptation ad
+            LEFT JOIN Adoption ad
                 ON ad.user = r.user
                 AND ad.animal = r.animal
                 AND ad.status = :completedStatus
@@ -62,6 +73,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     List<ReviewDetailDto> findReviewDetailDtoById(
             @Param("reviewId") Long reviewId,
-            @Param("completedStatus") Adoptation.AdoptionStatus completedStatus
+            @Param("completedStatus") Adoption.AdoptionStatus completedStatus
     );
 }

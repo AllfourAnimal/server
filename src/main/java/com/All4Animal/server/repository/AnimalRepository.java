@@ -10,11 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AnimalRepository extends JpaRepository<Animal, Long>, JpaSpecificationExecutor<Animal> {
 
     boolean existsByDesertionNo(String desertionNo);
+
+    Optional<Animal> findByDesertionNo(String desertionNo);
 
     void deleteByDesertionNoNotIn(List<String> animals);
 
