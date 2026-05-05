@@ -3,9 +3,11 @@ package com.All4Animal.server.service;
 import com.All4Animal.server.dto.request.ReviewRequest;
 import com.All4Animal.server.dto.request.S3PresignedUrlResponse;
 import com.All4Animal.server.dto.response.*;
+import com.All4Animal.server.entity.Adoptation;
 import com.All4Animal.server.entity.Animal;
 import com.All4Animal.server.entity.Review;
 import com.All4Animal.server.entity.Users;
+import com.All4Animal.server.repository.AdoptationRepository;
 import com.All4Animal.server.repository.AnimalRepository;
 import com.All4Animal.server.repository.ReviewRepository;
 import com.All4Animal.server.repository.UserRepository;
@@ -25,6 +27,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final AnimalRepository animalRepository;
+    private final AdoptationRepository adoptationRepository;
     private final S3Service s3Service;
 
 
@@ -73,6 +76,15 @@ public class ReviewService {
 
         Animal animal = animalRepository.findById(request.getAnimalId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 동물이 존재하지 않습니다."));
+
+        boolean completedAdoptation = adoptationRepository.existsByUserAndAnimalAndStatus(
+                user,
+                animal,
+                Adoptation.AdoptionStatus.COMPLETED
+        );
+        if (!completedAdoptation) {
+            throw new IllegalArgumentException("입양 완료된 동물에 대해서만 리뷰를 작성할 수 있습니다.");
+        }
 
         S3PresignedUrlResponse imageUploadResponse = null;
         if (image != null && !image.isEmpty()) {
