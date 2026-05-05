@@ -31,6 +31,35 @@ public class Animal {
         OTHER
     }
 
+    public enum ScoreInterval {
+        ZERO(0.0),
+        LOW(0.2),
+        MEDIUM(0.5),
+        HIGH(0.7),
+        VERY_HIGH(0.9),
+        MAX(1.0);
+
+        private final double value;
+
+        ScoreInterval(double value) {
+            this.value = value;
+        }
+
+        public double getValue() {
+            return value;
+        }
+
+        public static ScoreInterval fromScore(double score) {
+            if (score == 0.0) return ZERO;
+            if (score == 0.2) return LOW;
+            if (score == 0.5) return MEDIUM;
+            if (score == 0.7) return HIGH;
+            if (score == 0.9) return VERY_HIGH;
+            if (score == 1.0) return MAX;
+            return MEDIUM;
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "animal_id")
@@ -73,4 +102,31 @@ public class Animal {
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<AnimalImage> images = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval people_friendly;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval active_playful;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval calm_quiet;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval adaptable;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval outdoor_activity;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval animal_friendly;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval beginner_possible;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval family_friendly;
+
+    @Enumerated(EnumType.STRING)
+    private ScoreInterval slow_bonding_ok;
 }

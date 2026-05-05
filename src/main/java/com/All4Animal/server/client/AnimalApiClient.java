@@ -31,7 +31,7 @@ public class AnimalApiClient {
 
         String url = UriComponentsBuilder.fromUriString(nationalApiUrl)
                 .queryParam("serviceKey", nationalServiceKey)
-                .queryParam("numOfRows", "1000")
+                .queryParam("numOfRows", "1")
                 .queryParam("upr_cd", cityCode)
                 .queryParam("pageNo", "1")
                 .toUriString();
@@ -47,7 +47,7 @@ public class AnimalApiClient {
 
     public List<SeoulAnimalApiResponse> fetchSeoulAnimals() {
         RestTemplate restTemplate = new RestTemplate();
-        String requestUrl = String.format("%s/%s/json/vPetInfo/1/1000/", seoulApiUrl, seoulServiceKey);
+        String requestUrl = String.format("%s/%s/json/vPetInfo/1/1/", seoulApiUrl, seoulServiceKey);
 
         SeoulAnimalApiWrapper response = restTemplate.getForObject(requestUrl, SeoulAnimalApiWrapper.class);
 
@@ -64,7 +64,7 @@ public class AnimalApiClient {
         RestTemplate restTemplate = new RestTemplate();
 
         String requestUrl = String.format(
-                "%s/%s/json/vPetImg/1/1000/",
+                "%s/%s/json/vPetImg/1/3/",
                 seoulApiUrl,
                 seoulServiceKey
         );
