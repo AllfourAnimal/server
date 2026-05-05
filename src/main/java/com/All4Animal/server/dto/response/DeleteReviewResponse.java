@@ -6,9 +6,10 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
+
 @Getter
-public class ReviewDetailResponse {
+@AllArgsConstructor
+public class DeleteReviewResponse {
     @Schema(description = "리뷰 ID", example = "1")
     private Long reviewId;
 
@@ -17,12 +18,6 @@ public class ReviewDetailResponse {
 
     @Schema(description = "리뷰 내용", example = "산책을 정말 좋아해요.")
     private String content;
-
-    @Schema(description = "공고 번호", example = "4411112")
-    private String desertion_no;
-
-    @Schema(description = "구조 위치", example = "경기도 하남시 하남시청역 근방")
-    private String happenPlace;
 
     @Schema(description = "작성 시각", example = "2026-04-10")
     private LocalDateTime createdAt;
