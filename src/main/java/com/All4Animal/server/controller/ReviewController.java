@@ -377,7 +377,7 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "리뷰 수정 - 사진 포함", description = "multipart/form-data로 리뷰 정보와 사진을 함께 수정합니다. 사진이 있으면 기존 사진을 삭제하고 새 사진으로 교체합니다.")
+    @Operation(summary = "리뷰 수정 - 사진 포함", description = "multipart/form-data로 리뷰 정보와 사진을 함께 수정합니다. imageUrls에 포함된 기존 이미지는 유지하고, 빠진 기존 이미지는 삭제하며, 새 image 파일은 추가합니다.")
     @PatchMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ReviewResponse> updateReviewWithImage(
             @PathVariable Long reviewId,
@@ -387,6 +387,8 @@ public class ReviewController {
             @RequestParam(required = false) String petName,
             @Parameter(description = "리뷰 내용", example = "수정된 내용입니다.")
             @RequestParam(required = false) String content,
+            @Parameter(description = "유지할 기존 이미지 URL 또는 key 목록. 이 목록에 없는 기존 이미지는 삭제됩니다.")
+            @RequestParam(required = false) List<String> imageUrls,
             @Parameter(description = "리뷰 사진 파일 목록. 최대 3장까지 업로드할 수 있습니다.")
             @RequestPart(value = "image", required = false) List<MultipartFile> images
     ) {
@@ -397,7 +399,7 @@ public class ReviewController {
         request.setPetName(petName);
         request.setContent(content);
 
-        ReviewResponse response = reviewService.updateReview(userId, reviewId, request, images);
+        ReviewResponse response = reviewService.updateReview(userId, reviewId, request, imageUrls, images);
         return ResponseEntity.ok(response);
     }
 

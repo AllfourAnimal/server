@@ -144,8 +144,8 @@ public class RecommendationService {
     }
 
     private boolean isActiveAnimal(Animal animal) {
-        return zeroIfNull(animal.getActive_playful().getValue()) >= 0.7
-                || zeroIfNull(animal.getOutdoor_activity().getValue()) >= 0.7;
+        return scoreValue(animal.getActive_playful()) >= 0.7
+                || scoreValue(animal.getOutdoor_activity()) >= 0.7;
     }
 
 
@@ -222,22 +222,22 @@ public class RecommendationService {
 
     private int getAnimalPersonalityScore(Animal animal, String code) {
         return switch (code) {
-            case "people_friendly" -> scalePersonalityScore(animal.getPeople_friendly().getValue());
-            case "active_playful" -> scalePersonalityScore(animal.getActive_playful().getValue());
-            case "calm_quiet" -> scalePersonalityScore(animal.getCalm_quiet().getValue());
-            case "adaptable" -> scalePersonalityScore(animal.getAdaptable().getValue());
-            case "outdoor_activity" -> scalePersonalityScore(animal.getOutdoor_activity().getValue());
-            case "animal_friendly" -> scalePersonalityScore(animal.getAnimal_friendly().getValue());
-            case "beginner_possible" -> scalePersonalityScore(animal.getBeginner_possible().getValue());
-            case "family_friendly" -> scalePersonalityScore(animal.getFamily_friendly().getValue());
-            case "slow_bonding_ok" -> scalePersonalityScore(animal.getSlow_bonding_ok().getValue());
+            case "people_friendly" -> scalePersonalityScore(scoreValue(animal.getPeople_friendly()));
+            case "active_playful" -> scalePersonalityScore(scoreValue(animal.getActive_playful()));
+            case "calm_quiet" -> scalePersonalityScore(scoreValue(animal.getCalm_quiet()));
+            case "adaptable" -> scalePersonalityScore(scoreValue(animal.getAdaptable()));
+            case "outdoor_activity" -> scalePersonalityScore(scoreValue(animal.getOutdoor_activity()));
+            case "animal_friendly" -> scalePersonalityScore(scoreValue(animal.getAnimal_friendly()));
+            case "beginner_possible" -> scalePersonalityScore(scoreValue(animal.getBeginner_possible()));
+            case "family_friendly" -> scalePersonalityScore(scoreValue(animal.getFamily_friendly()));
+            case "slow_bonding_ok" -> scalePersonalityScore(scoreValue(animal.getSlow_bonding_ok()));
             default -> 0;
         };
     }
 
 
-    private Double zeroIfNull(Double score) {
-        return score == null ? 0.0 : score;
+    private double scoreValue(Animal.ScoreInterval scoreInterval) {
+        return scoreInterval == null ? 0.0 : scoreInterval.getValue();
     }
 
     private int getAnimalAge(Animal animal) {

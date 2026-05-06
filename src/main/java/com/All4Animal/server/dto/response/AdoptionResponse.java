@@ -23,6 +23,8 @@ public class AdoptionResponse {
     private Adoption.AdoptionStatus status;
     private String proofImageKey;
     private String proofImageUrl;
+    private String applicationPdfKey;
+    private String applicationPdfUrl;
     private boolean reviewWritten;
     private LocalDateTime updatedAt;
 
@@ -31,10 +33,14 @@ public class AdoptionResponse {
     }
 
     public static AdoptionResponse from(Adoption adoptation, String proofImageUrl) {
-        return from(adoptation, proofImageUrl, false);
+        return from(adoptation, proofImageUrl, null, false);
     }
 
     public static AdoptionResponse from(Adoption adoptation, String proofImageUrl, boolean reviewWritten) {
+        return from(adoptation, proofImageUrl, null, reviewWritten);
+    }
+
+    public static AdoptionResponse from(Adoption adoptation, String proofImageUrl, String applicationPdfUrl, boolean reviewWritten) {
         return new AdoptionResponse(
                 adoptation.getAdoptionId(),
                 adoptation.getUser().getUserId(),
@@ -48,6 +54,8 @@ public class AdoptionResponse {
                 adoptation.getStatus(),
                 adoptation.getProofImageKey(),
                 proofImageUrl,
+                adoptation.getApplicationPdfKey(),
+                applicationPdfUrl,
                 reviewWritten,
                 adoptation.getUpdatedAt()
         );
