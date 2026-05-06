@@ -2,10 +2,12 @@ package com.All4Animal.server.controller;
 
 import com.All4Animal.server.dto.request.LoginRequest;
 import com.All4Animal.server.dto.request.SignUpRequest;
+import com.All4Animal.server.dto.response.CurrentUserResponse;
 import com.All4Animal.server.dto.response.ErrorResponse;
 import com.All4Animal.server.dto.response.LoginIdCheckResponse;
 import com.All4Animal.server.dto.response.LoginResponse;
 import com.All4Animal.server.dto.response.SignUpResponse;
+import com.All4Animal.server.entity.Users;
 import com.All4Animal.server.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -263,5 +265,40 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @Operation(summary = "현재 로그인 사용자 조회", description = "Authorization 토큰을 기준으로 현재 로그인한 사용자의 기본 정보를 반환합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "현재 사용자 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CurrentUserResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "userId": 1,
+                                              "loginId": "all4animal",
+                                              "username": "홍길동",
+                                              "role": "USER"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    @GetMapping("/me")
+    public ResponseEntity<CurrentUserResponse> getMe() {
+        Users user = authService.getCurrentUser();
+        return ResponseEntity.ok(CurrentUserResponse.from(user));
     }
 }

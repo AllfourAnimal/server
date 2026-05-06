@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/review")
 @Tag(name = "Review", description = "리뷰 API")
@@ -325,8 +327,8 @@ public class ReviewController {
             @RequestParam(name = "desertion_no", required = false) String desertionNo,
             @Parameter(description = "리뷰 내용", example = "적응도 빠르고 애교가 많아요.")
             @RequestParam String content,
-            @Parameter(description = "리뷰 사진 파일")
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @Parameter(description = "리뷰 사진 파일 목록. 최대 3장까지 업로드할 수 있습니다.")
+            @RequestPart(value = "image", required = false) List<MultipartFile> images
     ){
         Long userId = authService.getCurrentUserId();
 
@@ -336,7 +338,66 @@ public class ReviewController {
         request.setDesertionNo(desertionNo);
         request.setContent(content);
 
-        ReviewResponse response = reviewService.postReview(userId, request, image);
+        ReviewResponse response = reviewService.postReview(userId, request, images);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "리뷰 수정", description = "reviewId로 리뷰를 찾아 로그인한 작성자 본인만 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "리뷰 수정 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ReviewResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "reviewId": 1,
+                                              "title": "수정된 입양 후기",
+                                              "petName": "초코",
+                                              "desertion_no": "441111202600123",
+                                              "content": "수정된 내용입니다.",
+                                              "createdAt": "2026-05-04T10:30:00",
+                                              "imageKey": "review/1/550e8400-e29b-41d4-a716-446655440000/cat.png",
+                                              "imageUrl": "https://bucket.s3.ap-northeast-2.amazonaws.com/..."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    @PatchMapping(value = "/{reviewId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReviewResponse> updateReview(
+            @PathVariable Long reviewId,
+            @RequestBody ReviewRequest request
+    ) {
+        Long userId = authService.getCurrentUserId();
+        ReviewResponse response = reviewService.updateReview(userId, reviewId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "리뷰 수정 - 사진 포함", description = "multipart/form-data로 리뷰 정보와 사진을 함께 수정합니다. 사진이 있으면 기존 사진을 삭제하고 새 사진으로 교체합니다.")
+    @PatchMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ReviewResponse> updateReviewWithImage(
+            @PathVariable Long reviewId,
+            @Parameter(description = "리뷰 제목", example = "수정된 입양 후기")
+            @RequestParam(required = false) String title,
+            @Parameter(description = "반려동물 이름", example = "초코")
+            @RequestParam(required = false) String petName,
+            @Parameter(description = "리뷰 내용", example = "수정된 내용입니다.")
+            @RequestParam(required = false) String content,
+            @Parameter(description = "리뷰 사진 파일 목록. 최대 3장까지 업로드할 수 있습니다.")
+            @RequestPart(value = "image", required = false) List<MultipartFile> images
+    ) {
+        Long userId = authService.getCurrentUserId();
+
+        ReviewRequest request = new ReviewRequest();
+        request.setTitle(title);
+        request.setPetName(petName);
+        request.setContent(content);
+
+        ReviewResponse response = reviewService.updateReview(userId, reviewId, request, images);
         return ResponseEntity.ok(response);
     }
 
@@ -383,7 +444,8 @@ public class ReviewController {
     })
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<?> deleteReview(@PathVariable Long reviewId){
-        DeleteReviewResponse response = reviewService.DeleteReview(reviewId);
+        Long userId = authService.getCurrentUserId();
+        DeleteReviewResponse response = reviewService.DeleteReview(userId, reviewId);
         return ResponseEntity.ok().body(response);
     }
 }
