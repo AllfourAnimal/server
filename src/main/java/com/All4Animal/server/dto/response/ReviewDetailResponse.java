@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -52,4 +53,7 @@ public class ReviewDetailResponse {
 
     @Schema(description = "이미지 조회용 Presigned URL", example = "https://bucket.s3.ap-northeast-2.amazonaws.com/...")
     private String imageUrl;
+
+    @Schema(description = "이미지 조회용 Presigned URL 목록")
+    private List<String> imageUrls;
 }

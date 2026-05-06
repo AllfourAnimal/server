@@ -65,7 +65,8 @@ public class ReviewService {
                 review.getAdoptedAt(),
                 review.getCreatedAt(),
                 review.getImageKey(),
-                createImageUrl(review.getImageKey())
+                createImageUrl(review.getImageKey()),
+                createImageUrls(review.getImageKey())
         );
     }
 
@@ -73,7 +74,7 @@ public class ReviewService {
         return postReview(userId, request, null);
     }
 
-    public ReviewResponse postReview(Long userId, ReviewRequest request, MultipartFile image){
+    public ReviewResponse postReview(Long userId, ReviewRequest request, List<MultipartFile> images){
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
@@ -96,10 +97,8 @@ public class ReviewService {
             throw new IllegalArgumentException("이미 해당 동물에 대한 리뷰를 작성했습니다.");
         }
 
-        S3PresignedUrlResponse imageUploadResponse = null;
-        if (image != null && !image.isEmpty()) {
-            imageUploadResponse = s3Service.uploadReviewImage(userId, image);
-        }
+        List<S3PresignedUrlResponse> imageUploadResponses = uploadReviewImages(userId, images);
+        String imageKeys = joinImageKeys(imageUploadResponses);
 
         Review review = Review.builder()
                 .title(request.getTitle())
@@ -107,7 +106,7 @@ public class ReviewService {
                 .desertionNo(animal.getDesertionNo())
                 .content(request.getContent())
                 .createdAt(LocalDateTime.now())
-                .imageKey(imageUploadResponse != null ? imageUploadResponse.getKey() : null)
+                .imageKey(imageKeys)
                 .user(user)
                 .animal(animal).build();
 
@@ -121,7 +120,10 @@ public class ReviewService {
                 review.getContent(),
                 review.getCreatedAt(),
                 review.getImageKey(),
-                imageUploadResponse != null ? imageUploadResponse.getPreSignedUrl() : null
+                firstImageUrl(imageUploadResponses),
+                imageUploadResponses.stream()
+                        .map(S3PresignedUrlResponse::getPreSignedUrl)
+                        .toList()
         );
     }
 
@@ -139,7 +141,8 @@ public class ReviewService {
                 review.getContent(),
                 review.getCreatedAt(),
                 review.getImageKey(),
-                createImageUrl(review.getImageKey())
+                createImageUrl(review.getImageKey()),
+                createImageUrls(review.getImageKey())
         );
 
         reviewRepository.delete(review);
@@ -149,23 +152,136 @@ public class ReviewService {
 
     }
 
+    public ReviewResponse updateReview(Long userId, Long reviewId, ReviewRequest request) {
+        return updateReview(userId, reviewId, request, null);
+    }
+
+    public ReviewResponse updateReview(Long userId, Long reviewId, ReviewRequest request, List<MultipartFile> images) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new IllegalArgumentException("본인이 작성한 리뷰만 수정할 수 있습니다.");
+        }
+
+        if (request.getTitle() != null) {
+            review.setTitle(request.getTitle());
+        }
+        if (request.getPetName() != null) {
+            review.setPetName(request.getPetName());
+        }
+        if (request.getContent() != null) {
+            review.setContent(request.getContent());
+        }
+
+        List<S3PresignedUrlResponse> imageUploadResponses = uploadReviewImages(userId, images);
+        if (!imageUploadResponses.isEmpty()) {
+            deleteReviewImage(review.getImageKey());
+            review.setImageKey(joinImageKeys(imageUploadResponses));
+        }
+
+        reviewRepository.save(review);
+
+        return new ReviewResponse(
+                review.getReviewId(),
+                review.getTitle(),
+                review.getPetName(),
+                review.getDesertionNo(),
+                review.getContent(),
+                review.getCreatedAt(),
+                review.getImageKey(),
+                !imageUploadResponses.isEmpty() ? firstImageUrl(imageUploadResponses) : createImageUrl(review.getImageKey()),
+                !imageUploadResponses.isEmpty()
+                        ? imageUploadResponses.stream().map(S3PresignedUrlResponse::getPreSignedUrl).toList()
+                        : createImageUrls(review.getImageKey())
+        );
+    }
+
     private void deleteReviewImage(String imageKey) {
         if (imageKey == null || imageKey.isBlank()) {
             return;
         }
 
-        try {
-            s3Service.deleteFile(imageKey);
-        } catch (Exception exception) {
-            log.warn("S3 리뷰 이미지 삭제 실패. key={}, reason={}", imageKey, exception.getMessage(), exception);
+        for (String key : splitImageKeys(imageKey)) {
+            try {
+                s3Service.deleteFile(key);
+            } catch (Exception exception) {
+                log.warn("S3 리뷰 이미지 삭제 실패. key={}, reason={}", key, exception.getMessage(), exception);
+            }
         }
     }
 
     private String createImageUrl(String imageKey) {
+        return createImageUrls(imageKey).stream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    private List<String> createImageUrls(String imageKey) {
+        return splitImageKeys(imageKey).stream()
+                .map(key -> s3Service.getGetS3Url(0L, key).getPreSignedUrl())
+                .toList();
+    }
+
+    private List<String> splitImageKeys(String imageKey) {
         if (imageKey == null || imageKey.isBlank()) {
+            return List.of();
+        }
+
+        List<String> keys = new ArrayList<>();
+        for (String key : imageKey.split(",")) {
+            if (StringUtils.hasText(key)) {
+                keys.add(key.trim());
+            }
+        }
+        return keys;
+    }
+
+    private List<S3PresignedUrlResponse> uploadReviewImages(Long userId, List<MultipartFile> images) {
+        List<MultipartFile> uploadImages = normalizeImages(images);
+        if (uploadImages.size() > 3) {
+            throw new IllegalArgumentException("리뷰 이미지는 최대 3장까지 업로드할 수 있습니다.");
+        }
+
+        List<S3PresignedUrlResponse> responses = new ArrayList<>();
+        for (MultipartFile image : uploadImages) {
+            responses.add(s3Service.uploadReviewImage(userId, image));
+        }
+        return responses;
+    }
+
+    private List<MultipartFile> normalizeImages(List<MultipartFile> images) {
+        if (images == null || images.isEmpty()) {
+            return List.of();
+        }
+
+        List<MultipartFile> uploadImages = new ArrayList<>();
+        for (MultipartFile image : images) {
+            if (image != null && !image.isEmpty()) {
+                uploadImages.add(image);
+            }
+        }
+        return uploadImages;
+    }
+
+    private String joinImageKeys(List<S3PresignedUrlResponse> imageUploadResponses) {
+        if (imageUploadResponses.isEmpty()) {
             return null;
         }
-        return s3Service.getGetS3Url(0L, imageKey).getPreSignedUrl();
+
+        return String.join(
+                ",",
+                imageUploadResponses.stream()
+                        .map(S3PresignedUrlResponse::getKey)
+                        .toList()
+        );
+    }
+
+    private String firstImageUrl(List<S3PresignedUrlResponse> imageUploadResponses) {
+        return imageUploadResponses.stream()
+                .findFirst()
+                .map(S3PresignedUrlResponse::getPreSignedUrl)
+                .orElse(null);
     }
 
     private Animal findReviewAnimal(ReviewRequest request) {
@@ -195,7 +311,8 @@ public class ReviewService {
                             animal.getAnimalType(),
                             animal.isAdopted(),
                             review.getImageKey(),
-                            createImageUrl(review.getImageKey())
+                            createImageUrl(review.getImageKey()),
+                            createImageUrls(review.getImageKey())
                     );
             responses.add(response);
         }
