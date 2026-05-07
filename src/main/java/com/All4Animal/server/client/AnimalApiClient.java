@@ -64,7 +64,7 @@ public class AnimalApiClient {
         RestTemplate restTemplate = new RestTemplate();
 
         String requestUrl = String.format(
-                "%s/%s/json/vPetImg/1/3/",
+                "%s/%s/json/vPetImg/1/1/",
                 seoulApiUrl,
                 seoulServiceKey
         );

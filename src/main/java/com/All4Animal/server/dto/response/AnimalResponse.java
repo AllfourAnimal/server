@@ -1,6 +1,8 @@
 package com.All4Animal.server.dto.response;
 
 import com.All4Animal.server.entity.Animal;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +33,34 @@ public class AnimalResponse {
     private String careTel;
     private String careAddr;
 
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval people_friendly;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval active_playful;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval calm_quiet;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval adaptable;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval outdoor_activity;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval animal_friendly;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval beginner_possible;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval family_friendly;
+
+    @Enumerated(EnumType.STRING)
+    private Animal.ScoreInterval slow_bonding_ok;
+
+
     public static AnimalResponse from(Animal animal) {
         return AnimalResponse.builder()
                 .animalId(animal.getAnimalId())
@@ -49,6 +79,15 @@ public class AnimalResponse {
                 .careNm(animal.getCareNm())
                 .careTel(animal.getCareTel())
                 .careAddr(animal.getCareAddr())
+                .people_friendly(animal.getPeople_friendly())
+                .active_playful(animal.getActive_playful())
+                .calm_quiet(animal.getCalm_quiet())
+                .adaptable(animal.getAdaptable())
+                .outdoor_activity(animal.getOutdoor_activity())
+                .animal_friendly(animal.getAnimal_friendly())
+                .beginner_possible(animal.getBeginner_possible())
+                .family_friendly(animal.getFamily_friendly())
+                .slow_bonding_ok(animal.getSlow_bonding_ok())
                 .build();
     }
 }

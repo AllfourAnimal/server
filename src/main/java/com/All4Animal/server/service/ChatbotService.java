@@ -10,7 +10,7 @@ import java.util.Map;
 
 
 @Service
-public class ChatBotService {
+public class ChatbotService {
 
     private final RestClient restClient;
 
@@ -20,7 +20,7 @@ public class ChatBotService {
     @Value("${custom.openai.vector-store-id}")
     private String vectorStoreId;
 
-    public ChatBotService() {
+    public ChatbotService() {
         this.restClient = RestClient.builder()
                 .baseUrl("https://api.openai.com/v1")
                 .build();
