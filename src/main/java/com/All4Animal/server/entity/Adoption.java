@@ -40,5 +40,7 @@ public class Adoption {
 
     private String proofImageKey;
 
+    private String applicationPdfKey;
+
     private LocalDateTime updatedAt;
 }

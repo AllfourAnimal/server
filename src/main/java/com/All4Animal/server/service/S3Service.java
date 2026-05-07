@@ -69,6 +69,11 @@ public class S3Service {
         return uploadFile(userId, file, "adoptation");
     }
 
+    @Transactional
+    public S3PresignedUrlResponse uploadAdoptionApplicationPdf(Long userId, MultipartFile file) {
+        return uploadFile(userId, file, "adoption-application");
+    }
+
     public String uploadAiAnimalImage(Long animalId, byte[] imageBytes) {
         String key = "animal-ai/" + animalId + "/" + UUID.randomUUID() + ".jpg";
 

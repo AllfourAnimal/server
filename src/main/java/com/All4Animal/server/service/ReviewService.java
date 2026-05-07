@@ -17,9 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -65,7 +69,7 @@ public class ReviewService {
                 review.getAdoptedAt(),
                 review.getCreatedAt(),
                 review.getImageKey(),
-                createImageUrl(review.getImageKey()),
+//                createImageUrl(review.getImageKey()),
                 createImageUrls(review.getImageKey())
         );
     }
@@ -153,10 +157,20 @@ public class ReviewService {
     }
 
     public ReviewResponse updateReview(Long userId, Long reviewId, ReviewRequest request) {
-        return updateReview(userId, reviewId, request, null);
+        return updateReview(userId, reviewId, request, null, null);
     }
 
     public ReviewResponse updateReview(Long userId, Long reviewId, ReviewRequest request, List<MultipartFile> images) {
+        return updateReview(userId, reviewId, request, null, images);
+    }
+
+    public ReviewResponse updateReview(
+            Long userId,
+            Long reviewId,
+            ReviewRequest request,
+            List<String> imageUrls,
+            List<MultipartFile> images
+    ) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
@@ -174,10 +188,25 @@ public class ReviewService {
             review.setContent(request.getContent());
         }
 
-        List<S3PresignedUrlResponse> imageUploadResponses = uploadReviewImages(userId, images);
-        if (!imageUploadResponses.isEmpty()) {
-            deleteReviewImage(review.getImageKey());
-            review.setImageKey(joinImageKeys(imageUploadResponses));
+        List<String> currentImageKeys = splitImageKeys(review.getImageKey());
+        List<String> retainedImageKeys = resolveRetainedImageKeys(imageUrls, currentImageKeys);
+        List<MultipartFile> uploadImages = normalizeImages(images);
+
+        if (retainedImageKeys.size() + uploadImages.size() > 3) {
+            throw new IllegalArgumentException("리뷰 이미지는 최대 3장까지 유지할 수 있습니다.");
+        }
+
+        boolean imageListRequested = imageUrls != null || !uploadImages.isEmpty();
+        List<S3PresignedUrlResponse> imageUploadResponses = List.of();
+        if (imageListRequested) {
+            deleteRemovedImages(currentImageKeys, retainedImageKeys);
+            imageUploadResponses = uploadReviewImages(userId, uploadImages);
+
+            List<String> finalImageKeys = new ArrayList<>(retainedImageKeys);
+            finalImageKeys.addAll(imageUploadResponses.stream()
+                    .map(S3PresignedUrlResponse::getKey)
+                    .toList());
+            review.setImageKey(joinImageKeysFromKeys(finalImageKeys));
         }
 
         reviewRepository.save(review);
@@ -190,10 +219,8 @@ public class ReviewService {
                 review.getContent(),
                 review.getCreatedAt(),
                 review.getImageKey(),
-                !imageUploadResponses.isEmpty() ? firstImageUrl(imageUploadResponses) : createImageUrl(review.getImageKey()),
-                !imageUploadResponses.isEmpty()
-                        ? imageUploadResponses.stream().map(S3PresignedUrlResponse::getPreSignedUrl).toList()
-                        : createImageUrls(review.getImageKey())
+                createImageUrl(review.getImageKey()),
+                createImageUrls(review.getImageKey())
         );
     }
 
@@ -275,6 +302,58 @@ public class ReviewService {
                         .map(S3PresignedUrlResponse::getKey)
                         .toList()
         );
+    }
+
+    private String joinImageKeysFromKeys(List<String> imageKeys) {
+        if (imageKeys == null || imageKeys.isEmpty()) {
+            return null;
+        }
+        return String.join(",", imageKeys);
+    }
+
+    private List<String> resolveRetainedImageKeys(List<String> imageUrls, List<String> currentImageKeys) {
+        if (imageUrls == null) {
+            return currentImageKeys;
+        }
+
+        Set<String> retainedKeys = new LinkedHashSet<>();
+        for (String imageUrl : imageUrls) {
+            if (!StringUtils.hasText(imageUrl)) {
+                continue;
+            }
+
+            String normalizedImageUrl = normalizeImageReference(imageUrl);
+            for (String currentImageKey : currentImageKeys) {
+                if (normalizedImageUrl.equals(currentImageKey) || normalizedImageUrl.contains(currentImageKey)) {
+                    retainedKeys.add(currentImageKey);
+                    break;
+                }
+            }
+        }
+
+        return new ArrayList<>(retainedKeys);
+    }
+
+    private String normalizeImageReference(String imageUrl) {
+        String value = imageUrl.trim();
+        int queryStartIndex = value.indexOf('?');
+        if (queryStartIndex >= 0) {
+            value = value.substring(0, queryStartIndex);
+        }
+
+        try {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException exception) {
+            return value;
+        }
+    }
+
+    private void deleteRemovedImages(List<String> currentImageKeys, List<String> retainedImageKeys) {
+        for (String currentImageKey : currentImageKeys) {
+            if (!retainedImageKeys.contains(currentImageKey)) {
+                deleteReviewImage(currentImageKey);
+            }
+        }
     }
 
     private String firstImageUrl(List<S3PresignedUrlResponse> imageUploadResponses) {

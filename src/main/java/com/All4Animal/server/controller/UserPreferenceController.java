@@ -40,11 +40,11 @@ public class UserPreferenceController {
                                             value = """
                     {
                       "animalType": "DOG",
-                      "size": "MEDIUM",
-                      "gender": "FEMALE",
-                      "age": "ADULT",
-                      "personalities": "활발함, 사람 좋아함",
-                      "updatedAt": "2026-05-01T10:30:00"
+                      "size": "SMALL",
+                      "gender": "MALE",
+                      "age": "YOUNG",
+                      "personalities": "people_friendly,active_playful",
+                      "updatedAt": "2026-05-01T10:35:00"
                     }
                     """
                                     ),
@@ -57,7 +57,7 @@ public class UserPreferenceController {
                       "size": "SMALL",
                       "gender": "MALE",
                       "age": "YOUNG",
-                      "personalities": "호기심 많음",
+                      "personalities": "people_friendly,active_playful",
                       "updatedAt": "2026-05-01T10:35:00"
                     }
                     """
@@ -71,7 +71,7 @@ public class UserPreferenceController {
                       "size": "ANY",
                       "gender": "ANY",
                       "age": "ANY",
-                      "personalities": "온순함",
+                      "personalities": "people_friendly,active_playful",
                       "updatedAt": "2026-05-01T10:40:00"
                     }
                     """
@@ -138,7 +138,7 @@ public class UserPreferenceController {
                       "size": "MEDIUM",
                       "gender": "FEMALE",
                       "age": "ADULT",
-                      "personalities": "활발함, 사람을 좋아함",
+                      "personalities": "people_friendly,active_playful",
                       "updatedAt": "2026-04-10T10:30:00"
                     }
                     """
@@ -206,7 +206,7 @@ public class UserPreferenceController {
                       "size": "MEDIUM",
                       "gender": "FEMALE",
                       "age": "ADULT",
-                      "personalities": "활발함, 사람 좋아함"
+                      "personalities": people_friendly,active_playful"
                     }
                     """
                             ),
@@ -219,7 +219,7 @@ public class UserPreferenceController {
                       "size": "SMALL",
                       "gender": "MALE",
                       "age": "YOUNG",
-                      "personalities": "호기심 많음"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -232,7 +232,7 @@ public class UserPreferenceController {
                       "size": "MEDIUM",
                       "gender": "ANY",
                       "age": "ADULT",
-                      "personalities": "온순함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -245,7 +245,7 @@ public class UserPreferenceController {
                       "size": "SMALL",
                       "gender": "FEMALE",
                       "age": "ADULT",
-                      "personalities": "사람 좋아함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -258,7 +258,7 @@ public class UserPreferenceController {
                       "size": "MEDIUM",
                       "gender": "MALE",
                       "age": "ADULT",
-                      "personalities": "활발함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -271,7 +271,7 @@ public class UserPreferenceController {
                       "size": "LARGE",
                       "gender": "MALE",
                       "age": "SENIOR",
-                      "personalities": "온순함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -284,7 +284,7 @@ public class UserPreferenceController {
                       "size": "ANY",
                       "gender": "FEMALE",
                       "age": "YOUNG",
-                      "personalities": "호기심 많음"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -297,7 +297,7 @@ public class UserPreferenceController {
                       "size": "SMALL",
                       "gender": "MALE",
                       "age": "ADULT",
-                      "personalities": "사람 좋아함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -310,7 +310,7 @@ public class UserPreferenceController {
                       "size": "MEDIUM",
                       "gender": "FEMALE",
                       "age": "YOUNG",
-                      "personalities": "활발함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -323,7 +323,7 @@ public class UserPreferenceController {
                       "size": "MEDIUM",
                       "gender": "ANY",
                       "age": "SENIOR",
-                      "personalities": "온순함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -336,7 +336,7 @@ public class UserPreferenceController {
                       "size": "SMALL",
                       "gender": "FEMALE",
                       "age": "YOUNG",
-                      "personalities": "호기심 많음"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -349,7 +349,7 @@ public class UserPreferenceController {
                       "size": "MEDIUM",
                       "gender": "MALE",
                       "age": "ADULT",
-                      "personalities": "사람 좋아함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -362,7 +362,7 @@ public class UserPreferenceController {
                       "size": "LARGE",
                       "gender": "ANY",
                       "age": "SENIOR",
-                      "personalities": "온순함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             ),
@@ -375,7 +375,7 @@ public class UserPreferenceController {
                       "size": "ANY",
                       "gender": "ANY",
                       "age": "ANY",
-                      "personalities": "활발함"
+                      "personalities": "people_friendly,active_playful"
                     }
                     """
                             )
