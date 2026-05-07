@@ -61,9 +61,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/adoptations/*/approve").hasRole("MASTER")
 
-                        // 나중에 밑에거 꼭 제거 필요
-//                        .requestMatchers(HttpMethod.POST, "/api/chatbot/ask").permitAll()
-
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
