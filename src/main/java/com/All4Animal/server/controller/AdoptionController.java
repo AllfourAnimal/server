@@ -42,11 +42,18 @@ public class AdoptionController {
                                               "adoptionId": 1,
                                               "userId": 1,
                                               "animalId": 10,
+                                              "desertionNo": "441111202600123",
                                               "animalSpecies": "푸들",
                                               "animalType": "DOG",
+                                              "careNm": "서울동물보호센터",
+                                              "careTel": "02-1234-5678",
+                                              "careAddr": "서울특별시 강남구 테헤란로 123",
                                               "status": "INQUIRY",
                                               "proofImageKey": null,
                                               "proofImageUrl": null,
+                                              "applicationPdfKey": null,
+                                              "applicationPdfUrl": null,
+                                              "reviewWritten": false,
                                               "updatedAt": "2026-05-05T12:00:00"
                                             }
                                             """
