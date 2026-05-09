@@ -25,6 +25,7 @@ import java.util.HashSet;
 public class AdoptionService {
 
     private static final long APPLICATION_PDF_MAX_SIZE_BYTES = 1024L * 1024L;
+    private static final int MAX_INQUIRY_COUNT_PER_USER = 5;
 
     private final AdoptionRepository adoptationRepository;
     private final AnimalRepository animalRepository;
@@ -55,6 +56,11 @@ public class AdoptionService {
         }
 
         if (adoptation == null) {
+            long inquiryCount = adoptationRepository.countByUserAndStatus(user, Adoption.AdoptionStatus.INQUIRY);
+            if (inquiryCount >= MAX_INQUIRY_COUNT_PER_USER) {
+                throw new IllegalArgumentException("입양 문의는 최대 5개까지만 가능합니다.");
+            }
+
             adoptation = Adoption.builder()
                     .user(user)
                     .animal(animal)

@@ -69,6 +69,22 @@ public class AdoptionController {
                     )
             ),
             @ApiResponse(
+                    responseCode = "400",
+                    description = "입양 문의 개수 초과",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "code": "BAD_REQUEST",
+                                              "message": "입양 문의는 최대 5개까지만 가능합니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "404",
                     description = "사용자 또는 동물 정보를 찾을 수 없음",
                     content = @Content(

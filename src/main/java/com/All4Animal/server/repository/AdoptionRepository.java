@@ -15,6 +15,8 @@ public interface AdoptionRepository extends JpaRepository<Adoption, Long> {
 
     Optional<Adoption> findByUserAndAnimal(Users user, Animal animal);
 
+    long countByUserAndStatus(Users user, Adoption.AdoptionStatus status);
+
     boolean existsByUserAndAnimalAndStatus(Users user, Animal animal, Adoption.AdoptionStatus status);
 
     boolean existsByUserAndAnimalAndStatusIn(Users user, Animal animal, List<Adoption.AdoptionStatus> statuses);
