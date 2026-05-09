@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 public class Adoption {
     public enum AdoptionStatus {
         INQUIRY,      // 입양 문의
-        APPLIED,      // 입양 신청
         COMPLETED,    // 입양 완료
     }
 
@@ -34,7 +33,7 @@ public class Adoption {
     @JoinColumn(name = "animal_id", nullable = false)
     private Animal animal;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = AdoptionStatusConverter.class)
     @Column(nullable = false, length = 30)
     private AdoptionStatus status;
 

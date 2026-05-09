@@ -60,7 +60,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/animals/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/adoptions/*/approve").hasRole("MASTER")
-                        .requestMatchers(HttpMethod.PATCH, "/api/adoptions/*/reject").hasRole("MASTER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

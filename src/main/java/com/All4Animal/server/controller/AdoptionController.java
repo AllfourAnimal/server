@@ -82,11 +82,11 @@ public class AdoptionController {
         return ResponseEntity.ok(adoptationService.createInquiry(animalId));
     }
 
-    @Operation(summary = "입양 신청", description = "입양 문의 상태인 건에 1MB 미만 PDF 신청서를 제출하고 입양 신청 상태로 변경합니다.")
+    @Operation(summary = "입양 서류 제출", description = "입양 문의 상태인 건에 1MB 미만 PDF 서류를 제출합니다. 상태는 입양 문의 상태로 유지됩니다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "입양 신청 상태 변경 성공",
+                    description = "입양 서류 제출 성공",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AdoptionResponse.class),
@@ -98,7 +98,7 @@ public class AdoptionController {
                                               "animalId": 10,
                                               "animalSpecies": "푸들",
                                               "animalType": "DOG",
-                                              "status": "APPLIED",
+                                              "status": "INQUIRY",
                                               "proofImageKey": null,
                                               "proofImageUrl": null,
                                               "applicationPdfKey": "adoption-application/1/550e8400-e29b-41d4-a716-446655440000/application.pdf",
@@ -118,7 +118,7 @@ public class AdoptionController {
         return ResponseEntity.ok(adoptationService.apply(animalId, pdf));
     }
 
-    @Operation(summary = "입양 완료 사진 등록", description = "입양 신청 상태에서 입양 완료 증빙 사진을 S3에 업로드하고 신청 건에 저장합니다.")
+    @Operation(summary = "입양 완료 사진 등록", description = "입양 문의 상태에서 입양 완료 증빙 사진을 S3에 업로드하고 문의 건에 저장합니다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -134,7 +134,7 @@ public class AdoptionController {
                                               "animalId": 10,
                                               "animalSpecies": "푸들",
                                               "animalType": "DOG",
-                                              "status": "APPLIED",
+                                              "status": "INQUIRY",
                                               "proofImageKey": "adoptation/1/550e8400-e29b-41d4-a716-446655440000/dog.png",
                                               "proofImageUrl": "https://bucket.s3.ap-northeast-2.amazonaws.com/...",
                                               "updatedAt": "2026-05-05T12:20:00"
@@ -152,7 +152,7 @@ public class AdoptionController {
         return ResponseEntity.ok(adoptationService.uploadProofImage(adoptionId, image));
     }
 
-    @Operation(summary = "입양 승인", description = "입양 완료 사진이 등록된 입양 신청 건을 승인해 입양 완료 상태로 변경합니다.")
+    @Operation(summary = "입양 승인", description = "입양 완료 사진이 등록된 입양 문의 건을 승인해 입양 완료 상태로 변경합니다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -183,39 +183,7 @@ public class AdoptionController {
         return ResponseEntity.ok(adoptationService.approve(adoptionId));
     }
 
-    @Operation(summary = "입양 신청 반려", description = "마스터가 미달 신청을 입양 문의 상태로 되돌립니다. 기존 신청서 PDF는 삭제됩니다.")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "입양 신청 반려 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = AdoptionResponse.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "adoptionId": 1,
-                                              "userId": 1,
-                                              "animalId": 10,
-                                              "desertionNo": "441111202600123",
-                                              "animalSpecies": "푸들",
-                                              "animalType": "DOG",
-                                              "status": "INQUIRY",
-                                              "applicationPdfKey": null,
-                                              "applicationPdfUrl": null,
-                                              "updatedAt": "2026-05-05T12:40:00"
-                                            }
-                                            """
-                            )
-                    )
-            )
-    })
-    @PatchMapping("/{adoptionId}/reject")
-    public ResponseEntity<AdoptionResponse> rejectToInquiry(@PathVariable Long adoptionId) {
-        return ResponseEntity.ok(adoptationService.rejectToInquiry(adoptionId));
-    }
-
-    @Operation(summary = "내 입양 문의/신청 목록 조회", description = "현재 로그인한 사용자의 입양 문의, 입양 신청, 입양 완료 내역을 최신순으로 조회합니다.")
+    @Operation(summary = "내 입양 문의 목록 조회", description = "현재 로그인한 사용자의 입양 문의, 입양 완료 내역을 최신순으로 조회합니다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -259,7 +227,7 @@ public class AdoptionController {
         return ResponseEntity.ok(adoptationService.getMyAdoptations());
     }
 
-    @Operation(summary = "입양 문의/신청 전체 조회", description = "입양 문의, 입양 신청, 입양 완료 내역을 최신순으로 조회합니다. status 쿼리로 INQUIRY, APPLIED, COMPLETED 중 하나를 필터링할 수 있습니다.")
+    @Operation(summary = "입양 문의 전체 조회", description = "입양 문의, 입양 완료 내역을 최신순으로 조회합니다. status 쿼리로 INQUIRY, COMPLETED 중 하나를 필터링할 수 있습니다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -278,7 +246,7 @@ public class AdoptionController {
                                                         "animalId": 21,
                                                         "animalSpecies": "믹스견",
                                                         "animalType": "DOG",
-                                                        "status": "APPLIED",
+                                                        "status": "INQUIRY",
                                                         "proofImageKey": "adoptation/4/550e8400-e29b-41d4-a716-446655440000/dog.png",
                                                         "proofImageUrl": "https://bucket.s3.ap-northeast-2.amazonaws.com/...",
                                                         "updatedAt": "2026-05-05T13:00:00"
@@ -287,7 +255,7 @@ public class AdoptionController {
                                                     """
                                     ),
                                     @ExampleObject(
-                                            name = "입양 신청만 조회",
+                                            name = "입양 문의만 조회",
                                             value = """
                                                     [
                                                       {
@@ -296,7 +264,7 @@ public class AdoptionController {
                                                         "animalId": 21,
                                                         "animalSpecies": "믹스견",
                                                         "animalType": "DOG",
-                                                        "status": "APPLIED",
+                                                        "status": "INQUIRY",
                                                         "proofImageKey": "adoptation/4/550e8400-e29b-41d4-a716-446655440000/dog.png",
                                                         "proofImageUrl": "https://bucket.s3.ap-northeast-2.amazonaws.com/...",
                                                         "updatedAt": "2026-05-05T13:00:00"

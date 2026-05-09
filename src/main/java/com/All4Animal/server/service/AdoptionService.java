@@ -81,20 +81,20 @@ public class AdoptionService {
         }
 
         Adoption adoptation = adoptationRepository.findByUserAndAnimal(user, animal)
-                .orElseThrow(() -> new IllegalArgumentException("입양 문의 후 신청할 수 있습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("입양 문의 후 서류를 제출할 수 있습니다."));
 
         if (adoptation.getStatus() == Adoption.AdoptionStatus.COMPLETED) {
-            throw new IllegalArgumentException("이미 입양 완료된 신청입니다.");
+            throw new IllegalArgumentException("이미 입양 완료된 문의입니다.");
         }
 
         if (adoptation.getStatus() != Adoption.AdoptionStatus.INQUIRY) {
-            throw new IllegalArgumentException("입양 문의 상태에서만 신청할 수 있습니다.");
+            throw new IllegalArgumentException("입양 문의 상태에서만 서류를 제출할 수 있습니다.");
         }
 
         validateApplicationPdf(applicationPdf);
+        deleteApplicationPdf(adoptation.getApplicationPdfKey());
         S3PresignedUrlResponse uploadResponse = s3Service.uploadAdoptionApplicationPdf(userId, applicationPdf);
 
-        adoptation.setStatus(Adoption.AdoptionStatus.APPLIED);
         adoptation.setApplicationPdfKey(uploadResponse.getKey());
         adoptation.setUpdatedAt(LocalDateTime.now());
 
@@ -111,14 +111,14 @@ public class AdoptionService {
         Long userId = authService.getCurrentUserId();
 
         Adoption adoptation = adoptationRepository.findById(adoptionId)
-                .orElseThrow(() -> new IllegalArgumentException("입양 신청을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("입양 문의를 찾을 수 없습니다."));
 
         if (!adoptation.getUser().getUserId().equals(userId)) {
-            throw new IllegalArgumentException("본인의 입양 신청에만 사진을 등록할 수 있습니다.");
+            throw new IllegalArgumentException("본인의 입양 문의에만 사진을 등록할 수 있습니다.");
         }
 
-        if (adoptation.getStatus() != Adoption.AdoptionStatus.APPLIED) {
-            throw new IllegalArgumentException("입양 신청 상태에서만 사진을 등록할 수 있습니다.");
+        if (adoptation.getStatus() != Adoption.AdoptionStatus.INQUIRY) {
+            throw new IllegalArgumentException("입양 문의 상태에서만 사진을 등록할 수 있습니다.");
         }
 
         if (adoptation.getAnimal().isAdopted()) {
@@ -140,10 +140,10 @@ public class AdoptionService {
         }
 
         Adoption adoptation = adoptationRepository.findById(adoptionId)
-                .orElseThrow(() -> new IllegalArgumentException("입양 신청을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("입양 문의를 찾을 수 없습니다."));
 
-        if (adoptation.getStatus() != Adoption.AdoptionStatus.APPLIED) {
-            throw new IllegalArgumentException("입양 신청 상태만 승인할 수 있습니다.");
+        if (adoptation.getStatus() != Adoption.AdoptionStatus.INQUIRY) {
+            throw new IllegalArgumentException("입양 문의 상태만 승인할 수 있습니다.");
         }
 
         if (adoptation.getProofImageKey() == null || adoptation.getProofImageKey().isBlank()) {
@@ -160,33 +160,6 @@ public class AdoptionService {
         adoptation.setUpdatedAt(LocalDateTime.now());
 
         return AdoptionResponse.from(adoptationRepository.save(adoptation), createProofImageUrl(adoptation));
-    }
-
-    @Transactional
-    public AdoptionResponse rejectToInquiry(Long adoptionId) {
-        Users currentUser = authService.getCurrentUser();
-        if (currentUser.getRole() != Users.Role.MASTER) {
-            throw new IllegalArgumentException("마스터 계정만 입양 신청을 반려할 수 있습니다.");
-        }
-
-        Adoption adoptation = adoptationRepository.findById(adoptionId)
-                .orElseThrow(() -> new IllegalArgumentException("입양 신청을 찾을 수 없습니다."));
-
-        if (adoptation.getStatus() != Adoption.AdoptionStatus.APPLIED) {
-            throw new IllegalArgumentException("입양 신청 상태만 문의 상태로 되돌릴 수 있습니다.");
-        }
-
-        deleteApplicationPdf(adoptation.getApplicationPdfKey());
-        adoptation.setApplicationPdfKey(null);
-        adoptation.setStatus(Adoption.AdoptionStatus.INQUIRY);
-        adoptation.setUpdatedAt(LocalDateTime.now());
-
-        return AdoptionResponse.from(
-                adoptationRepository.save(adoptation),
-                createProofImageUrl(adoptation),
-                null,
-                false
-        );
     }
 
     public List<AdoptionResponse> getMyAdoptations() {
@@ -247,11 +220,11 @@ public class AdoptionService {
 
     private void validateApplicationPdf(MultipartFile pdf) {
         if (pdf == null || pdf.isEmpty()) {
-            throw new IllegalArgumentException("업로드할 입양 신청서 PDF가 없습니다.");
+            throw new IllegalArgumentException("업로드할 입양 서류 PDF가 없습니다.");
         }
 
         if (pdf.getSize() >= APPLICATION_PDF_MAX_SIZE_BYTES) {
-            throw new IllegalArgumentException("입양 신청서 PDF는 1MB 미만으로 업로드해야 합니다.");
+            throw new IllegalArgumentException("입양 서류 PDF는 1MB 미만으로 업로드해야 합니다.");
         }
 
         String contentType = pdf.getContentType();
@@ -260,7 +233,7 @@ public class AdoptionService {
         boolean pdfFilename = StringUtils.hasText(filename) && filename.toLowerCase().endsWith(".pdf");
 
         if (!pdfContentType && !pdfFilename) {
-            throw new IllegalArgumentException("입양 신청서는 PDF 파일만 업로드할 수 있습니다.");
+            throw new IllegalArgumentException("입양 서류는 PDF 파일만 업로드할 수 있습니다.");
         }
     }
 }

@@ -89,12 +89,11 @@ public class ReviewService {
                 animal,
                 List.of(
                         Adoption.AdoptionStatus.INQUIRY,
-                        Adoption.AdoptionStatus.APPLIED,
                         Adoption.AdoptionStatus.COMPLETED
                 )
         );
         if (!hasAdoptionHistory) {
-            throw new IllegalArgumentException("입양 문의 또는 입양 신청 이력이 있는 동물만 리뷰를 작성할 수 있습니다.");
+            throw new IllegalArgumentException("입양 문의 이력이 있는 동물만 리뷰를 작성할 수 있습니다.");
         }
 
         if (reviewRepository.existsByUserAndAnimal(user, animal)) {
