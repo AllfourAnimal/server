@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import com.All4Animal.server.dto.response.api.SeoulAnimalImageApiResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class AnimalService {
     private final AiService aiService;
     private final ChatClient chatClient;
     private final ObjectMapper objectMapper;
+    private final AtomicBoolean syncing = new AtomicBoolean(false);
 
     public AnimalService(AnimalRepository animalRepository,
                          AnimalImageRepository animalImageRepository,
@@ -162,26 +164,53 @@ public class AnimalService {
     }
 
     @Scheduled(cron = "0 0 0 * * *")
-    @Transactional
     public void syncAnimalsWithApi() {
-        List<AnimalApiResponse> nationalItems = animalApiClient.fetchNationalAnimals();
-        List<SeoulAnimalApiResponse> seoulItems = animalApiClient.fetchSeoulAnimals();
-        List<SeoulAnimalImageApiResponse> seoulImages = animalApiClient.fetchSeoulAnimalImages();
-
-        int totalFetched = (nationalItems != null ? nationalItems.size() : 0)
-                + (seoulItems != null ? seoulItems.size() : 0);
-
-        if (totalFetched == 0) {
-            System.out.println("불러온 데이터 없음");
+        if (!syncing.compareAndSet(false, true)) {
+            System.out.println("이미 동기화 중입니다.");
             return;
         }
 
-        System.out.println("불러온 총 데이터 개수: " + totalFetched + "개");
+        try {
+            List<AnimalApiResponse> nationalItems = animalApiClient.fetchNationalAnimals();
+            List<SeoulAnimalApiResponse> seoulItems = animalApiClient.fetchSeoulAnimals();
+            List<SeoulAnimalImageApiResponse> seoulImages = animalApiClient.fetchSeoulAnimalImages();
 
-        saveAllApiAnimals(nationalItems, seoulItems, seoulImages);
+            int totalFetched = (nationalItems != null ? nationalItems.size() : 0)
+                    + (seoulItems != null ? seoulItems.size() : 0);
+
+            if (totalFetched == 0) {
+                System.out.println("불러온 데이터 없음");
+                return;
+            }
+
+            System.out.println("불러온 총 데이터 개수: " + totalFetched + "개");
+
+            saveAllApiAnimals(nationalItems, seoulItems, seoulImages);
+        } finally {
+            syncing.set(false);
+        }
     }
 
-    @Transactional
+
+//    @Scheduled(cron = "0 0 0 * * *")
+//    public void syncAnimalsWithApi() {
+//        List<AnimalApiResponse> nationalItems = animalApiClient.fetchNationalAnimals();
+//        List<SeoulAnimalApiResponse> seoulItems = animalApiClient.fetchSeoulAnimals();
+//        List<SeoulAnimalImageApiResponse> seoulImages = animalApiClient.fetchSeoulAnimalImages();
+//
+//        int totalFetched = (nationalItems != null ? nationalItems.size() : 0)
+//                + (seoulItems != null ? seoulItems.size() : 0);
+//
+//        if (totalFetched == 0) {
+//            System.out.println("불러온 데이터 없음");
+//            return;
+//        }
+//
+//        System.out.println("불러온 총 데이터 개수: " + totalFetched + "개");
+//
+//        saveAllApiAnimals(nationalItems, seoulItems, seoulImages);
+//    }
+
     public void saveAllApiAnimals(
             List<AnimalApiResponse> nationalItems,
             List<SeoulAnimalApiResponse> seoulItems,
@@ -204,26 +233,55 @@ public class AnimalService {
         }
 
         // 사라진 데이터 삭제
-        if (nationalItems != null && !nationalItems.isEmpty() && seoulItems != null && !seoulItems.isEmpty()) {
-            animalRepository.deleteByDesertionNoNotIn(currentApiIds);
-        }
+//        if (nationalItems != null && !nationalItems.isEmpty() && seoulItems != null && !seoulItems.isEmpty()) {
+//            animalRepository.deleteByDesertionNoNotIn(currentApiIds);
+//        }
 
         // 공공 데이터 처리
+        int successCount = 0;
+        int failCount = 0;
+
         if (nationalItems != null) {
             for (AnimalApiResponse item : nationalItems) {
-                if (animalRepository.existsByDesertionNo(item.getDesertionNo()))
-                    continue;
+                try {
+                    if (animalRepository.existsByDesertionNo(item.getDesertionNo()))
+                        continue;
 
-                if (!"보호중".equals(item.getProcessState()))
-                    continue;
+                    if (!"보호중".equals(item.getProcessState()))
+                        continue;
 
-                String score = generatePrompt(item.getSpecialMark());
+                    String score = generatePrompt(item.getSpecialMark());
 
-                Animal animal = convertToEntity(item, score);
-                processImages(animal, item.getPopfile1(), item.getPopfile2());
-                animalRepository.save(animal);
+                    Animal animal = convertToEntity(item, score);
+                    processImages(animal, item.getPopfile1(), item.getPopfile2());
+                    animalRepository.save(animal);
+
+                    successCount++;
+                } catch (Exception e) {
+                    failCount++;
+                    System.out.println("공공데이터 동물 저장 실패 desertionNo="
+                            + item.getDesertionNo()
+                            + ", error="
+                            + e.getMessage());
+                }
             }
         }
+
+//        if (nationalItems != null) {
+//            for (AnimalApiResponse item : nationalItems) {
+//                if (animalRepository.existsByDesertionNo(item.getDesertionNo()))
+//                    continue;
+//
+//                if (!"보호중".equals(item.getProcessState()))
+//                    continue;
+//
+//                String score = generatePrompt(item.getSpecialMark());
+//
+//                Animal animal = convertToEntity(item, score);
+//                processImages(animal, item.getPopfile1(), item.getPopfile2());
+//                animalRepository.save(animal);
+//            }
+//        }
 
         Map<String, String> seoulImageMap = new HashMap<>();
 
@@ -242,24 +300,55 @@ public class AnimalService {
         // 서울시 데이터 처리
         if (seoulItems != null) {
             for (SeoulAnimalApiResponse item : seoulItems) {
-                String seq = normalizeSeq(item.getSeq());
-                String seoulId = "SEOUL_" + seq;
-                String adoptStatus = item.getAdoptStatus();
+                try {
+                    String seq = normalizeSeq(item.getSeq());
+                    String seoulId = "SEOUL_" + seq;
+                    String adoptStatus = item.getAdoptStatus();
 
-                if (animalRepository.existsByDesertionNo(seoulId))
-                    continue;
-                if (adoptStatus != null && adoptStatus.contains("완료"))
-                    continue;
+                    if (animalRepository.existsByDesertionNo(seoulId))
+                        continue;
 
-                String seoulImageUrl = seoulImageMap.get(seq);
-//                String score = generatePrompt(item.getCont());
-                String score = generatePrompt(stripHtml(item.getCont()));
+                    if (adoptStatus != null && adoptStatus.contains("완료"))
+                        continue;
 
-                Animal animal = convertSeoulToEntity(item, seoulId, score);
-                processImages(animal, seoulImageUrl, null);
-                animalRepository.save(animal);
+                    String seoulImageUrl = seoulImageMap.get(seq);
+                    String score = generatePrompt(stripHtml(item.getCont()));
+
+                    Animal animal = convertSeoulToEntity(item, seoulId, score);
+                    processImages(animal, seoulImageUrl, null);
+                    animalRepository.save(animal);
+
+                    successCount++;
+                } catch (Exception e) {
+                    failCount++;
+                    System.out.println("서울데이터 동물 저장 실패 seq="
+                            + item.getSeq()
+                            + ", error="
+                            + e.getMessage());
+                }
             }
         }
+        System.out.println("동기화 완료 success=" + successCount + ", fail=" + failCount);
+//        if (seoulItems != null) {
+//            for (SeoulAnimalApiResponse item : seoulItems) {
+//                String seq = normalizeSeq(item.getSeq());
+//                String seoulId = "SEOUL_" + seq;
+//                String adoptStatus = item.getAdoptStatus();
+//
+//                if (animalRepository.existsByDesertionNo(seoulId))
+//                    continue;
+//                if (adoptStatus != null && adoptStatus.contains("완료"))
+//                    continue;
+//
+//                String seoulImageUrl = seoulImageMap.get(seq);
+//                // String score = generatePrompt(item.getCont());
+//                String score = generatePrompt(stripHtml(item.getCont()));
+//
+//                Animal animal = convertSeoulToEntity(item, seoulId, score);
+//                processImages(animal, seoulImageUrl, null);
+//                animalRepository.save(animal);
+//            }
+//        }
     }
 
     private String normalizeSeq(String seq) {
