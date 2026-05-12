@@ -12,6 +12,8 @@ public class AnimalSearchResponse {
 
     private Animal.AnimalType animalType;
 
+    private String desertionNo;
+
     private Animal.Gender animal_sex;
 
     private String species;
@@ -28,6 +30,7 @@ public class AnimalSearchResponse {
         return new AnimalSearchResponse(
                 animal.getAnimalId(),
                 animal.getAnimalType(),
+                animal.getDesertionNo(),
                 animal.getAnimal_sex(),
                 animal.getSpecies(),
                 animal.getDescription(),

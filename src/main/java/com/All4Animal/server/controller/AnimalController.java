@@ -69,6 +69,7 @@ public class AnimalController {
     })
     @GetMapping("/sync")
     public ResponseEntity<?> syncAnimals() {
+        System.out.println("SYNC API 호출됨");
         try {
             animalService.syncAnimalsWithApi();
             return ResponseEntity.ok(Map.of("message", "동기화 및 DB 저장"));
