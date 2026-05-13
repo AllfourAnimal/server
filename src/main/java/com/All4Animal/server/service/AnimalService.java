@@ -160,7 +160,7 @@ public class AnimalService {
                 .toList();
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0 0 0 * * *")
     public void syncAnimalsWithApi() {
         System.out.println("syncAnimalsWithApi 시작");
 
