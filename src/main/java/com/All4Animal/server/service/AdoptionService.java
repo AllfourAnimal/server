@@ -117,7 +117,7 @@ public class AdoptionService {
             throw new IllegalArgumentException("본인의 입양 신청에만 사진을 등록할 수 있습니다.");
         }
 
-        if (adoptation.getStatus() != Adoption.AdoptionStatus.APPLIED) {
+        if (adoptation.getStatus() != Adoption.AdoptionStatus.INQUIRY) {
             throw new IllegalArgumentException("입양 신청 상태에서만 사진을 등록할 수 있습니다.");
         }
 
@@ -141,8 +141,7 @@ public class AdoptionService {
 
         Adoption adoptation = adoptationRepository.findById(adoptionId)
                 .orElseThrow(() -> new IllegalArgumentException("입양 신청을 찾을 수 없습니다."));
-
-        if (adoptation.getStatus() != Adoption.AdoptionStatus.APPLIED) {
+        if (adoptation.getStatus() != Adoption.AdoptionStatus.INQUIRY) {
             throw new IllegalArgumentException("입양 신청 상태만 승인할 수 있습니다.");
         }
 
